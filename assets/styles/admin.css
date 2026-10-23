@@ -1,0 +1,147 @@
+/*
+ * Back office: modern Tailwind interface (independent from the legacy look of the public site).
+ */
+@import "tailwindcss";
+
+@source "../../templates/admin";
+@source "../controllers";
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --color-brand-50: #fdf2fb;
+    --color-brand-100: #fce7f8;
+    --color-brand-500: #e11fc4;
+    --color-brand-600: #c70fac;
+    --color-brand-700: #a30c8d;
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .btn-primary {
+        @apply bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600;
+    }
+
+    .btn-secondary {
+        @apply bg-white text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600;
+    }
+
+    .btn-ghost-danger {
+        @apply bg-white text-red-600 ring-1 ring-red-200 ring-inset hover:bg-red-50;
+    }
+
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs;
+    }
+
+    .card {
+        @apply rounded-xl bg-white shadow-sm ring-1 ring-slate-200;
+    }
+
+    .card-header {
+        @apply flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4;
+    }
+
+    .card-title {
+        @apply text-base font-semibold text-slate-900;
+    }
+
+    .card-body {
+        @apply px-5 py-5;
+    }
+
+    .page-title {
+        @apply text-2xl font-bold tracking-tight text-slate-900;
+    }
+
+    .badge {
+        @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+    }
+
+    .badge-green {
+        @apply bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 ring-inset;
+    }
+
+    .badge-gray {
+        @apply bg-slate-100 text-slate-600 ring-1 ring-slate-500/20 ring-inset;
+    }
+
+    .badge-pink {
+        @apply bg-brand-50 text-brand-700 ring-1 ring-brand-600/20 ring-inset;
+    }
+
+    .badge-amber {
+        @apply bg-amber-50 text-amber-800 ring-1 ring-amber-600/20 ring-inset;
+    }
+
+    .table {
+        @apply min-w-full divide-y divide-slate-200 text-sm;
+
+        & th {
+            @apply px-4 py-3 text-left text-xs font-semibold tracking-wide whitespace-nowrap text-slate-500 uppercase;
+        }
+
+        & td {
+            @apply px-4 py-3 align-middle text-slate-700;
+        }
+
+        & tbody {
+            @apply divide-y divide-slate-100 bg-white;
+        }
+
+        & tbody tr:hover {
+            @apply bg-slate-50;
+        }
+    }
+
+    .form-label {
+        @apply mb-1 block text-sm font-medium text-slate-700;
+    }
+
+    .form-input {
+        @apply block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-slate-300 ring-inset placeholder:text-slate-400 focus:ring-2 focus:ring-brand-600 focus:ring-inset;
+    }
+
+    .form-input.is-invalid {
+        @apply ring-red-500;
+    }
+
+    .form-help {
+        @apply mt-1 text-xs text-slate-500;
+    }
+
+    .form-error {
+        @apply mt-1 text-xs font-medium text-red-600;
+    }
+
+    .form-checkbox {
+        @apply size-4 rounded border-slate-300 text-brand-600 accent-brand-600;
+    }
+
+    .nav-link {
+        @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white;
+    }
+
+    .nav-link.is-active {
+        @apply bg-brand-600 text-white;
+    }
+
+    .stat-card {
+        @apply flex items-center gap-4 rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200;
+    }
+}
+
+/* TinyMCE takes the place of the textarea once loaded. */
+.tox-tinymce {
+    border-radius: 0.5rem !important;
+}
+
+[data-controller='photo-uploader'] .is-dragover {
+    @apply border-brand-600 bg-brand-50;
+}

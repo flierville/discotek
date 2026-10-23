@@ -1,7 +1,7 @@
 
 ###> symfony/framework-bundle ###
 /.env.local
-/.env.local.php
+/.env.local
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
@@ -18,3 +18,16 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+/.idea/*
+
+###> app ###
+# Party photos (outside of public/, served after the code check) and WYSIWYG uploads.
+/storage/
+/public/uploads/*
+!/public/uploads/pages/
+/public/uploads/pages/*
+!/public/uploads/pages/.gitkeep
+# ChromeDriver downloaded by "vendor/bin/bdi detect drivers" for the E2E tests.
+/drivers/
+###< app ###

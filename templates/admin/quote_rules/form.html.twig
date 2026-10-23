@@ -1,0 +1,20 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ entity.id ? 'Modifier' : 'Ajouter' }} une {{ label }}{% endblock %}
+
+{% block body %}
+    <div class="mb-6">
+        <a href="{{ path('admin_quote_rules') }}" class="text-sm text-slate-500 hover:text-brand-600">&larr; Règles de devis</a>
+        <h1 class="page-title mt-1">{{ entity.id ? 'Modifier' : 'Ajouter' }} une {{ label }}</h1>
+    </div>
+
+    <section class="card max-w-2xl">
+        {{ form_start(form, {attr: {class: 'card-body space-y-5'}}) }}
+            {{ form_widget(form) }}
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{{ path('admin_quote_rules') }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

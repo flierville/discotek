@@ -1,0 +1,12 @@
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="mb-6 flex items-start gap-3 rounded-lg px-4 py-3 text-sm ring-1 ring-inset {{ type == 'success' ? 'bg-emerald-50 text-emerald-800 ring-emerald-600/20' : 'bg-red-50 text-red-800 ring-red-600/20' }}"
+             role="{{ type == 'success' ? 'status' : 'alert' }}" data-controller="dismissible">
+            {{ include('admin/_icon.html.twig', {name: type == 'success' ? 'check' : 'x', class: 'size-5 shrink-0'}) }}
+            <p class="flex-1">{{ message }}</p>
+            <button type="button" class="opacity-60 hover:opacity-100" data-action="dismissible#dismiss" aria-label="Fermer">
+                {{ include('admin/_icon.html.twig', {name: 'x', class: 'size-4'}) }}
+            </button>
+        </div>
+    {% endfor %}
+{% endfor %}

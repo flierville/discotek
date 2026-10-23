@@ -1,0 +1,22 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            # Content of the pages written with the WYSIWYG editor.
+            app.page_content:
+                allow_safe_elements: true
+                allow_static_elements: true
+                allow_relative_links: true
+                allow_relative_medias: true
+                allowed_link_schemes: ['http', 'https', 'mailto', 'tel']
+                allowed_media_schemes: ['http', 'https']
+                allow_attributes:
+                    style: '*'
+                    class: '*'
+                    target: 'a'
+                    rel: 'a'
+                    title: '*'
+                allow_elements:
+                    iframe: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title', 'loading']
+                    video: ['src', 'controls', 'width', 'height', 'poster']
+                    source: ['src', 'type']
+                max_input_length: 200000

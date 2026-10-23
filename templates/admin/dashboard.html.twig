@@ -1,0 +1,88 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <h1 class="page-title">Bonjour{{ app.user.name ? ' ' ~ app.user.name }}</h1>
+            <p class="mt-1 text-sm text-slate-500">Voici l'activité du site Disco-Tek Animation.</p>
+        </div>
+        <a href="{{ path('admin_party_new') }}" class="btn btn-primary">
+            {{ include('admin/_icon.html.twig', {name: 'plus', class: 'size-4'}) }} Nouvelle soirée
+        </a>
+    </div>
+
+    {% set cards = [
+        {label: 'Devis (30 derniers jours)', value: stats.quotesLast30Days, icon: 'euro', url: path('admin_quote_index'), badge: stats.unreadQuotes ? stats.unreadQuotes ~ ' non lu' ~ (stats.unreadQuotes > 1 ? 's') : null},
+        {label: 'Messages non lus', value: stats.unreadContacts, icon: 'envelope', url: path('admin_contact_index')},
+        {label: 'Soirées / photos', value: stats.parties ~ ' / ' ~ stats.photos, icon: 'photo', url: path('admin_party_index')},
+        {label: 'Abonnés newsletter', value: stats.subscribers, icon: 'newspaper', url: path('admin_newsletter_index')},
+    ] %}
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {% for card in cards %}
+            <a href="{{ card.url }}" class="stat-card transition hover:ring-brand-500">
+                <div class="flex size-12 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                    {{ include('admin/_icon.html.twig', {name: card.icon, class: 'size-6'}) }}
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500">{{ card.label }}</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ card.value }}</p>
+                    {% if card.badge ?? null %}<span class="badge badge-pink mt-1">{{ card.badge }}</span>{% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">Derniers devis</h2>
+                <a href="{{ path('admin_quote_index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">Tout voir</a>
+            </div>
+            <ul class="divide-y divide-slate-100">
+                {% for quote in latestQuotes %}
+                    <li>
+                        <a href="{{ path('admin_quote_show', {id: quote.id}) }}" class="flex items-center justify-between gap-4 px-5 py-3 hover:bg-slate-50">
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-medium text-slate-900">
+                                    {% if not quote.read %}<span class="mr-1 inline-block size-2 rounded-full bg-brand-500" title="Non lu"></span>{% endif %}
+                                    {{ quote.fullName }}
+                                </p>
+                                <p class="truncate text-xs text-slate-500">{{ quote.eventType ?? 'Soirée' }} - {{ quote.city }} - {{ quote.eventDate|format_date('medium', locale: 'fr') }}</p>
+                            </div>
+                            <span class="shrink-0 text-sm font-semibold text-slate-900">{{ quote.totalPrice|euros }}</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="px-5 py-8 text-center text-sm text-slate-500">Aucun devis pour le moment.</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">Derniers messages</h2>
+                <a href="{{ path('admin_contact_index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">Tout voir</a>
+            </div>
+            <ul class="divide-y divide-slate-100">
+                {% for message in latestContacts %}
+                    <li>
+                        <a href="{{ path('admin_contact_show', {id: message.id}) }}" class="block px-5 py-3 hover:bg-slate-50">
+                            <p class="flex items-center justify-between gap-4 text-sm font-medium text-slate-900">
+                                <span class="truncate">
+                                    {% if not message.read %}<span class="mr-1 inline-block size-2 rounded-full bg-brand-500" title="Non lu"></span>{% endif %}
+                                    {{ message.name }}
+                                </span>
+                                <span class="shrink-0 text-xs font-normal text-slate-500">{{ message.createdAt|format_datetime('short', 'short', locale: 'fr') }}</span>
+                            </p>
+                            <p class="truncate text-xs text-slate-500">{{ message.message|u.truncate(110, '...') }}</p>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="px-5 py-8 text-center text-sm text-slate-500">Aucun message pour le moment.</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+{% endblock %}

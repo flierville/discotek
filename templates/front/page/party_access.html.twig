@@ -1,0 +1,26 @@
+{% extends 'front/page/_layout.html.twig' %}
+
+{% form_theme form 'front/form/theme.html.twig' %}
+
+{% block page_extra %}
+    {% for message in app.flashes('gallery_error') %}
+        <div class="form-errors" role="alert">
+            <ul><li>{{ message }}</li></ul>
+        </div>
+    {% endfor %}
+
+    {{ include('front/form/_errors_summary.html.twig') }}
+
+    {{ form_start(form, {attr: {class: 'legacy-form', id: 'form_photo', novalidate: 'novalidate', 'data-controller': 'submit-once'}}) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.newsletter) }}
+        {{ form_row(form.location) }}
+        {{ form_row(form.code) }}
+        {{ form_rest(form) }}
+
+        <div class="legacy-form__submit">
+            <button type="submit" class="legacy-button" data-submit-once-target="button">Valider</button>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

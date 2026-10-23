@@ -1,0 +1,59 @@
+{% use 'form_div_layout.html.twig' %}
+
+{%- block form_row -%}
+    <div class="{{ row_class|default('') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block form_label -%}
+    {%- if label is not same as(false) -%}
+        <label class="form-label"{% if not compound %} for="{{ id }}"{% endif %}>
+            {{- (label ?: name|humanize)|trans({}, translation_domain) -}}
+            {%- if required %} <span class="text-brand-600">*</span>{% endif -%}
+        </label>
+    {%- endif -%}
+{%- endblock form_label -%}
+
+{%- block form_help -%}
+    {%- if help is not empty -%}<p id="{{ id }}_help" class="form-help">{{ help|trans({}, translation_domain) }}</p>{%- endif -%}
+{%- endblock form_help -%}
+
+{%- block form_errors -%}
+    {%- for error in errors -%}<p class="form-error">{{ error.message }}</p>{%- endfor -%}
+{%- endblock form_errors -%}
+
+{%- block form_widget_simple -%}
+    {%- set attr = attr|merge({class: ('form-input ' ~ (attr.class ?? '') ~ (errors|length > 0 ? ' is-invalid'))|trim}) -%}
+    {{- parent() -}}
+{%- endblock form_widget_simple -%}
+
+{%- block textarea_widget -%}
+    {%- set attr = attr|merge({class: ('form-input ' ~ (attr.class ?? '') ~ (errors|length > 0 ? ' is-invalid'))|trim}) -%}
+    {{- parent() -}}
+{%- endblock textarea_widget -%}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({class: ('form-input ' ~ (attr.class ?? ''))|trim}) -%}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{%- block checkbox_row -%}
+    <div class="{{ row_class|default('') }}">
+        <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+            {{- form_widget(form, {attr: attr|merge({class: 'form-checkbox'})}) -}}
+            {{ label|trans({}, translation_domain) }}
+        </label>
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block repeated_row -%}
+    {{- form_row(form.first, {row_class: row_class|default('')}) -}}
+    {{- form_row(form.second, {row_class: row_class|default('')}) -}}
+    {{- form_errors(form) -}}
+{%- endblock repeated_row -%}

@@ -1,0 +1,33 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Message de {{ message.name }}{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <a href="{{ path('admin_contact_index') }}" class="text-sm text-slate-500 hover:text-brand-600">&larr; Contacts</a>
+            <h1 class="page-title mt-1">Message de {{ message.name }}</h1>
+            <p class="mt-1 text-sm text-slate-500">Reçu le {{ message.createdAt|format_datetime('full', 'short', locale: 'fr') }}</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="mailto:{{ message.email }}" class="btn btn-primary">
+                {{ include('admin/_icon.html.twig', {name: 'envelope', class: 'size-4'}) }} Répondre
+            </a>
+            {{ include('admin/_delete_button.html.twig', {url: path('admin_contact_delete', {id: message.id}), token_id: 'delete-contact-' ~ message.id, message: 'Supprimer définitivement ce message ?', label: 'Supprimer'}) }}
+        </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+        <section class="card card-body lg:col-span-2">
+            <p class="text-sm leading-relaxed whitespace-pre-line text-slate-800">{{ message.message }}</p>
+        </section>
+        <section class="card h-fit">
+            <dl class="divide-y divide-slate-100 text-sm">
+                <div class="px-5 py-3"><dt class="text-slate-500">Email</dt><dd class="font-medium"><a class="text-brand-600" href="mailto:{{ message.email }}">{{ message.email }}</a></dd></div>
+                <div class="px-5 py-3"><dt class="text-slate-500">Téléphone</dt><dd class="font-medium">{{ message.phone ?? '-' }}</dd></div>
+                <div class="px-5 py-3"><dt class="text-slate-500">Newsletter</dt><dd class="font-medium">{{ message.newsletter ? 'Oui' : 'Non' }}</dd></div>
+                <div class="px-5 py-3"><dt class="text-slate-500">Adresse IP</dt><dd class="font-medium">{{ message.ipAddress ?? '-' }}</dd></div>
+            </dl>
+        </section>
+    </div>
+{% endblock %}

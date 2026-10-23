@@ -1,0 +1,92 @@
+{% set nav = [
+    {route: 'admin_dashboard', label: 'Tableau de bord', icon: 'home', prefix: 'admin_dashboard'},
+    {route: 'admin_page_index', label: 'Pages', icon: 'document', prefix: 'admin_page'},
+    {route: 'admin_quote_index', label: 'Devis', icon: 'euro', prefix: 'admin_quote_', exclude: 'admin_quote_rule'},
+    {route: 'admin_quote_rules', label: 'Règles de devis', icon: 'adjustments', prefix: 'admin_quote_rule'},
+    {route: 'admin_contact_index', label: 'Contacts', icon: 'envelope', prefix: 'admin_contact'},
+    {route: 'admin_party_index', label: 'Photos de soirées', icon: 'photo', prefix: 'admin_party'},
+    {route: 'admin_newsletter_index', label: 'Newsletter', icon: 'newspaper', prefix: 'admin_newsletter'},
+    {route: 'admin_settings', label: 'Paramètres', icon: 'cog', prefix: 'admin_settings'},
+] %}
+{% set current_route = app.current_route ?? '' %}
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %}Administration{% endblock %} - Discotek Animation</title>
+    {% block javascripts %}{{ importmap('admin') }}{% endblock %}
+</head>
+<body class="h-full font-sans text-slate-800 antialiased">
+{% block layout %}
+<div data-controller="sidebar" class="min-h-full">
+    {# Mobile overlay #}
+    <div class="fixed inset-0 z-30 hidden bg-slate-900/60 lg:hidden" data-sidebar-target="overlay" data-action="click->sidebar#close"></div>
+
+    <aside class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col bg-slate-900 transition-transform lg:translate-x-0" data-sidebar-target="panel">
+        <div class="flex h-16 items-center gap-2 px-5">
+            <span class="text-lg font-extrabold tracking-tight"><span class="text-brand-500">Disco-Tek</span> <span class="text-yellow-300">Admin</span></span>
+            <button type="button" class="ml-auto text-slate-400 hover:text-white lg:hidden" data-action="sidebar#close" aria-label="Fermer le menu">
+                {{ include('admin/_icon.html.twig', {name: 'x'}) }}
+            </button>
+        </div>
+        <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-2" aria-label="Administration">
+            {% for item in nav %}
+                {% set active = current_route starts with item.prefix and (item.exclude is not defined or not (current_route starts with item.exclude)) %}
+                <a href="{{ path(item.route) }}" class="nav-link{{ active ? ' is-active' }}" {% if active %}aria-current="page"{% endif %}>
+                    {{ include('admin/_icon.html.twig', {name: item.icon}) }}
+                    {{ item.label }}
+                </a>
+            {% endfor %}
+        </nav>
+        <div class="border-t border-white/10 p-3">
+            <a href="{{ path('app_home') }}" target="_blank" class="nav-link">
+                {{ include('admin/_icon.html.twig', {name: 'external'}) }} Voir le site
+            </a>
+            <a href="{{ path('admin_profile') }}" class="nav-link{{ current_route == 'admin_profile' ? ' is-active' }}">
+                {{ include('admin/_icon.html.twig', {name: 'user'}) }}
+                <span class="truncate">{{ app.user.displayName }}</span>
+            </a>
+            <a href="{{ path('admin_logout') }}" class="nav-link">
+                {{ include('admin/_icon.html.twig', {name: 'logout'}) }} Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    <div class="lg:pl-64">
+        <header class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:hidden">
+            <button type="button" class="text-slate-600" data-action="sidebar#open" aria-label="Ouvrir le menu">
+                {{ include('admin/_icon.html.twig', {name: 'menu', class: 'size-6'}) }}
+            </button>
+            <span class="font-bold"><span class="text-brand-600">Disco-Tek</span> Admin</span>
+        </header>
+
+        <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            {{ include('admin/_flashes.html.twig') }}
+            {% block body %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{# Confirmation dialog used by data-controller="confirm" forms. #}
+<dialog id="confirm-dialog" class="m-auto w-full max-w-md rounded-xl p-0 shadow-2xl backdrop:bg-slate-900/60">
+    <div class="p-6">
+        <div class="flex items-start gap-4">
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                {{ include('admin/_icon.html.twig', {name: 'trash'}) }}
+            </div>
+            <div>
+                <h2 class="text-base font-semibold text-slate-900">Confirmation</h2>
+                <p class="mt-2 text-sm text-slate-600" data-confirm-message></p>
+            </div>
+        </div>
+    </div>
+    <form method="dialog" class="flex justify-end gap-3 bg-slate-50 px-6 py-4">
+        <button value="cancel" class="btn btn-secondary">Annuler</button>
+        <button value="confirm" class="btn btn-danger" data-confirm-accept>Supprimer</button>
+    </form>
+</dialog>
+</body>
+</html>

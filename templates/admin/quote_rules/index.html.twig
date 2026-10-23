@@ -1,0 +1,110 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Règles de devis{% endblock %}
+
+{% macro rule_header(title, description, rule) %}
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">{{ title }}</h2>
+            <p class="mt-1 text-xs text-slate-500">{{ description }}</p>
+        </div>
+        <a href="{{ path('admin_quote_rule_new', {rule: rule}) }}" class="btn btn-secondary btn-sm">
+            {{ include('admin/_icon.html.twig', {name: 'plus', class: 'size-4'}) }} Ajouter
+        </a>
+    </div>
+{% endmacro %}
+
+{% macro rule_actions(rule, entity, label) %}
+    <td class="text-right whitespace-nowrap">
+        <a href="{{ path('admin_quote_rule_edit', {rule: rule, id: entity.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+        {{ include('admin/_delete_button.html.twig', {url: path('admin_quote_rule_delete', {rule: rule, id: entity.id}), token_id: 'delete-' ~ rule ~ '-' ~ entity.id, message: 'Supprimer « ' ~ label ~ ' » ?', small: true}) }}
+    </td>
+{% endmacro %}
+
+{% block body %}
+    <div class="mb-6">
+        <a href="{{ path('admin_quote_index') }}" class="text-sm text-slate-500 hover:text-brand-600">&larr; Devis</a>
+        <h1 class="page-title mt-1">Règles de calcul des devis</h1>
+        <p class="mt-1 max-w-3xl text-sm text-slate-500">
+            Prix de la prestation = prix de la <strong>date spéciale</strong> si la soirée tombe ce jour-là, sinon prix fixe du <strong>type d'événement</strong> s'il en a un,
+            sinon prix selon le <strong>nombre de personnes</strong>. Les <strong>frais de déplacement</strong> sont ajoutés (présentés au client comme inclus dans le forfait).
+        </p>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-2">
+        <section class="card overflow-hidden">
+            {{ _self.rule_header('Nombre de personnes', 'Prix de base de l\'animation musicale.', 'personnes') }}
+            <table class="table">
+                <thead class="bg-slate-50"><tr><th>Libellé</th><th class="text-right">Prix</th><th>Statut</th><th></th></tr></thead>
+                <tbody>
+                    {% for range in guestRanges %}
+                        <tr>
+                            <td class="font-medium text-slate-900">{{ range.label }}</td>
+                            <td class="text-right">{{ range.price|euros }}</td>
+                            <td>{% if range.active %}<span class="badge badge-green">Actif</span>{% else %}<span class="badge badge-gray">Masqué</span>{% endif %}</td>
+                            {{ _self.rule_actions('personnes', range, range.label) }}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card overflow-hidden">
+            {{ _self.rule_header("Types d'événement", 'Liste « Votre demande porte sur ». Un prix fixe remplace le prix selon le nombre de personnes.', 'evenements') }}
+            <table class="table">
+                <thead class="bg-slate-50"><tr><th>Libellé</th><th class="text-right">Prix fixe</th><th>Statut</th><th></th></tr></thead>
+                <tbody>
+                    {% for type in eventTypes %}
+                        <tr>
+                            <td class="font-medium text-slate-900">{{ type.label }}</td>
+                            <td class="text-right">{{ type.fixedPrice is null ? '-' : type.fixedPrice|euros }}</td>
+                            <td>{% if type.active %}<span class="badge badge-green">Actif</span>{% else %}<span class="badge badge-gray">Masqué</span>{% endif %}</td>
+                            {{ _self.rule_actions('evenements', type, type.label) }}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card overflow-hidden">
+            {{ _self.rule_header('Dates spéciales', 'Prix appliqué quel que soit l\'événement (Noël, jour de l\'an...).', 'dates') }}
+            <table class="table">
+                <thead class="bg-slate-50"><tr><th>Date</th><th>Libellé</th><th class="text-right">Prix</th><th></th></tr></thead>
+                <tbody>
+                    {% for date in specialDates %}
+                        <tr>
+                            <td class="whitespace-nowrap font-medium text-slate-900">{{ '%02d/%02d'|format(date.day, date.month) }}</td>
+                            <td>{{ date.label }}</td>
+                            <td class="text-right">{{ date.price|euros }}</td>
+                            {{ _self.rule_actions('dates', date, date.label) }}
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4" class="py-6 text-center text-slate-500">Aucune date spéciale.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Frais de déplacement</h2>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Jusqu'à {{ site_settings().shortTripMaxKm }} km : {{ site_settings().shortTripFee|euros }}.
+                        Au-delà : {{ site_settings().longTripBaseFee|euros }} + {{ site_settings().longTripPricePerKm }} € par km supplémentaire.
+                    </p>
+                </div>
+            </div>
+            {{ form_start(travelForm, {attr: {class: 'card-body grid gap-5 sm:grid-cols-2'}}) }}
+                {{ form_row(travelForm.departureLatitude) }}
+                {{ form_row(travelForm.departureLongitude) }}
+                {{ form_row(travelForm.roadFactor, {row_class: 'sm:col-span-2'}) }}
+                {{ form_row(travelForm.shortTripMaxKm) }}
+                {{ form_row(travelForm.shortTripFee) }}
+                {{ form_row(travelForm.longTripBaseFee) }}
+                {{ form_row(travelForm.longTripPricePerKm) }}
+                <div class="sm:col-span-2"><button type="submit" class="btn btn-primary">Enregistrer les frais de déplacement</button></div>
+            {{ form_end(travelForm) }}
+        </section>
+    </div>
+{% endblock %}

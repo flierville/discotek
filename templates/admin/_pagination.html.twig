@@ -1,0 +1,16 @@
+{# Parameter: paginator (App\Pagination\Paginator) #}
+{% if paginator.pageCount > 1 %}
+    {% set route = app.current_route %}
+    {% set params = app.request.query.all|merge(app.current_route_parameters) %}
+    <nav class="flex items-center justify-between border-t border-slate-200 px-5 py-3 text-sm" aria-label="Pagination">
+        <p class="text-slate-500">Page {{ paginator.page }} sur {{ paginator.pageCount }} - {{ paginator.total }} résultat{{ paginator.total > 1 ? 's' }}</p>
+        <div class="flex gap-2">
+            {% if paginator.hasPrevious %}
+                <a class="btn btn-secondary btn-sm" href="{{ path(route, params|merge({page: paginator.page - 1})) }}">Précédent</a>
+            {% endif %}
+            {% if paginator.hasNext %}
+                <a class="btn btn-secondary btn-sm" href="{{ path(route, params|merge({page: paginator.page + 1})) }}">Suivant</a>
+            {% endif %}
+        </div>
+    </nav>
+{% endif %}

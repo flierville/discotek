@@ -1,0 +1,43 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Paramètres{% endblock %}
+
+{% block body %}
+    <div class="mb-6">
+        <h1 class="page-title">Paramètres du site</h1>
+        <p class="mt-1 text-sm text-slate-500">Coordonnées, destinataires des formulaires et référencement.</p>
+    </div>
+
+    {{ form_start(form) }}
+        <div class="grid gap-6 lg:grid-cols-2">
+            <section class="card">
+                <div class="card-header"><h2 class="card-title">Coordonnées</h2></div>
+                <div class="card-body space-y-5">
+                    {{ form_row(form.siteName) }}
+                    {{ form_row(form.publicEmail) }}
+                    {{ form_row(form.phone) }}
+                    {{ form_row(form.address) }}
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header"><h2 class="card-title">Destinataires des formulaires</h2></div>
+                <div class="card-body space-y-5">
+                    {{ form_row(form.contactRecipients) }}
+                    {{ form_row(form.quoteRecipients) }}
+                </div>
+            </section>
+
+            <section class="card lg:col-span-2">
+                <div class="card-header"><h2 class="card-title">Référencement et statistiques</h2></div>
+                <div class="card-body grid gap-5 lg:grid-cols-2">
+                    {{ form_row(form.siteTitle, {row_class: 'lg:col-span-2'}) }}
+                    {{ form_row(form.metaDescription) }}
+                    {{ form_row(form.metaKeywords) }}
+                    {{ form_row(form.googleAnalyticsId) }}
+                </div>
+            </section>
+        </div>
+        <div class="mt-6"><button type="submit" class="btn btn-primary">Enregistrer les paramètres</button></div>
+    {{ form_end(form) }}
+{% endblock %}

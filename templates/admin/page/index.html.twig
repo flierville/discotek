@@ -1,0 +1,54 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Pages{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="page-title">Pages</h1>
+            <p class="mt-1 text-sm text-slate-500">Contenu des pages du site, modifiable avec l'éditeur visuel.</p>
+        </div>
+        <a href="{{ path('admin_page_new') }}" class="btn btn-primary">
+            {{ include('admin/_icon.html.twig', {name: 'plus', class: 'size-4'}) }} Nouvelle page
+        </a>
+    </div>
+
+    <div class="card overflow-x-auto">
+        <table class="table">
+            <thead class="bg-slate-50">
+                <tr>
+                    <th>Titre</th>
+                    <th>Adresse</th>
+                    <th>Type</th>
+                    <th>Menu</th>
+                    <th>Statut</th>
+                    <th><span class="sr-only">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                    <tr>
+                        <td class="font-medium text-slate-900">
+                            <a href="{{ path('admin_page_edit', {id: page.id}) }}" class="hover:text-brand-600">{{ page.title }}</a>
+                        </td>
+                        <td><code class="text-xs text-slate-500">{{ page_path(page) }}</code></td>
+                        <td><span class="badge {{ page.kind.value == 'standard' ? 'badge-gray' : 'badge-pink' }}">{{ page.kind.label }}</span></td>
+                        <td>{{ page.inMenu ? page.position : '-' }}</td>
+                        <td>
+                            {% if page.published %}<span class="badge badge-green">En ligne</span>{% else %}<span class="badge badge-gray">Hors ligne</span>{% endif %}
+                        </td>
+                        <td class="text-right whitespace-nowrap">
+                            <a href="{{ page_path(page) }}" target="_blank" class="btn btn-secondary btn-sm" title="Voir sur le site">
+                                {{ include('admin/_icon.html.twig', {name: 'eye', class: 'size-4'}) }}
+                            </a>
+                            <a href="{{ path('admin_page_edit', {id: page.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                            {% if not page.kind.unique %}
+                                {{ include('admin/_delete_button.html.twig', {url: path('admin_page_delete', {id: page.id}), token_id: 'delete-page-' ~ page.id, message: 'Supprimer définitivement la page "' ~ page.title ~ '" ?', small: true}) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block content %}
+    <h1>Votre message a bien été envoyé</h1>
+    <p>Madame, Monsieur {{ message.name }},</p>
+    <p>Nous avons bien reçu votre message et nous vous en remercions. Nous reviendrons vers vous dans les plus brefs délais.</p>
+
+    <h2>Votre message</h2>
+    <table role="presentation" class="details" cellpadding="0" cellspacing="0">
+        <tr><th>Adresse mail</th><td>{{ message.email }}</td></tr>
+        {% if message.phone %}<tr><th>Téléphone</th><td>{{ message.phone }}</td></tr>{% endif %}
+    </table>
+    <p class="message" style="margin-top:12px;">{{ message.message }}</p>
+{% endblock %}
+
+{% block footer_extra %}
+    <p class="legal">Ceci est un email automatique, merci de ne pas y répondre directement : contactez-nous par téléphone ou à l'adresse {{ settings.publicEmail }}.</p>
+{% endblock %}

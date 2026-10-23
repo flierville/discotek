@@ -1,0 +1,61 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Devis de {{ quote.fullName }}{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <a href="{{ path('admin_quote_index') }}" class="text-sm text-slate-500 hover:text-brand-600">&larr; Devis</a>
+            <h1 class="page-title mt-1">Devis de {{ quote.fullName }}</h1>
+            <p class="mt-1 text-sm text-slate-500">Reçu le {{ quote.createdAt|format_datetime('full', 'short', locale: 'fr') }}</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="mailto:{{ quote.email }}?subject={{ ('Votre demande de devis - ' ~ site_settings().siteName)|url_encode }}" class="btn btn-primary">
+                {{ include('admin/_icon.html.twig', {name: 'envelope', class: 'size-4'}) }} Répondre
+            </a>
+            {{ include('admin/_delete_button.html.twig', {url: path('admin_quote_delete', {id: quote.id}), token_id: 'delete-quote-' ~ quote.id, message: 'Supprimer définitivement ce devis ?', label: 'Supprimer'}) }}
+        </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+        <section class="card lg:col-span-2">
+            <div class="card-header"><h2 class="card-title">Demande</h2></div>
+            <dl class="divide-y divide-slate-100 text-sm">
+                {% for label, value in {
+                    'Nom': quote.lastName,
+                    'Prénom': quote.firstName ?? '-',
+                    'Email': quote.email,
+                    'Téléphone': quote.phone,
+                    'Adresse postale': quote.postalAddress ?? '-',
+                    "Type d'événement": quote.eventType ?? 'Non précisé',
+                    'Nombre de personnes': quote.guestRange,
+                    'Lieu': quote.city ~ (quote.postalCode ? ' (' ~ quote.postalCode ~ ')'),
+                    'Date de la soirée': quote.eventDate|format_date('full', locale: 'fr')|capitalize,
+                    'Newsletter': quote.newsletter ? 'Oui' : 'Non',
+                    'Adresse IP': quote.ipAddress ?? '-',
+                } %}
+                    <div class="grid gap-1 px-5 py-3 sm:grid-cols-3">
+                        <dt class="text-slate-500">{{ label }}</dt>
+                        <dd class="whitespace-pre-line text-slate-900 sm:col-span-2">{{ value }}</dd>
+                    </div>
+                {% endfor %}
+                <div class="grid gap-1 px-5 py-3 sm:grid-cols-3">
+                    <dt class="text-slate-500">Précisions</dt>
+                    <dd class="whitespace-pre-line text-slate-900 sm:col-span-2">{{ quote.details ?? '-' }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="card h-fit">
+            <div class="card-header"><h2 class="card-title">Montant envoyé</h2></div>
+            <div class="card-body">
+                <p class="text-4xl font-extrabold text-slate-900">{{ quote.totalPrice|euros }}</p>
+                <dl class="mt-5 space-y-2 text-sm">
+                    <div class="flex justify-between"><dt class="text-slate-500">Prestation</dt><dd class="font-medium">{{ quote.servicePrice|euros }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-slate-500">Déplacement ({{ quote.distanceKm }} km)</dt><dd class="font-medium">{{ quote.travelPrice|euros }}</dd></div>
+                </dl>
+                <p class="mt-5 rounded-lg bg-slate-50 p-3 text-xs text-slate-600">{{ quote.pricingRule }}</p>
+            </div>
+        </section>
+    </div>
+{% endblock %}

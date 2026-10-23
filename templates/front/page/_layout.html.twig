@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{# Title and meta tags follow the legacy rules: "<page title> | <site title>", page keywords/description or the site ones. #}
+{% block title %}{{ page.home ? settings.siteTitle : page.browserTitle ~ ' | ' ~ settings.siteTitle }}{% endblock %}
+{% block meta_keywords %}{{ page.metaKeywords ?: settings.metaKeywords }}{% endblock %}
+{% block meta_description %}{{ page.metaDescription ?: settings.metaDescription }}{% endblock %}
+
+{% block body %}
+    <div class="rich-text">
+        {{ page.content|raw }}
+    </div>
+    {% block page_extra %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block content %}
+    <h1>Demande de Tarif</h1>
+    <p>Une demande de tarif vient d'être réalisée par un internaute, voici les informations :</p>
+
+    <div class="price">
+        <p class="price-label">Montant envoyé à l'internaute</p>
+        <p class="price-amount">{{ quote.totalPrice|euros }}</p>
+        <p class="price-note">Prestation {{ quote.servicePrice|euros }} + déplacement {{ quote.travelPrice|euros }} ({{ quote.distanceKm }} km)</p>
+    </div>
+
+    <table role="presentation" class="details" cellpadding="0" cellspacing="0">
+        <tr><th>Nom</th><td>{{ quote.lastName }}</td></tr>
+        <tr><th>Prénom</th><td>{{ quote.firstName ?? '-' }}</td></tr>
+        <tr><th>Mail</th><td><a href="mailto:{{ quote.email }}">{{ quote.email }}</a></td></tr>
+        <tr><th>Téléphone</th><td><a href="tel:{{ quote.phone|replace({' ': '', '.': ''}) }}">{{ quote.phone }}</a></td></tr>
+        <tr><th>Adresse</th><td>{{ quote.postalAddress ? quote.postalAddress|nl2br : '-' }}</td></tr>
+        <tr><th>Type de prestation</th><td>{{ quote.eventType ?? 'Non précisé' }}</td></tr>
+        <tr><th>Nombre de personnes</th><td>{{ quote.guestRange }}</td></tr>
+        <tr><th>Lieu de la prestation</th><td>{{ quote.city }}{% if quote.postalCode %} ({{ quote.postalCode }}){% endif %}</td></tr>
+        <tr><th>Date de la prestation</th><td>{{ quote.eventDate|format_date('full', locale: 'fr')|capitalize }}</td></tr>
+        <tr><th>Distance estimée</th><td>{{ quote.distanceKm }} km</td></tr>
+        <tr><th>Règle de prix</th><td>{{ quote.pricingRule }}</td></tr>
+        <tr><th>Newsletter</th><td>{{ quote.newsletter ? 'Oui' : 'Non' }}</td></tr>
+        <tr><th>IP</th><td>{{ quote.ipAddress ?? '-' }}</td></tr>
+    </table>
+
+    {% if quote.details %}
+        <h2>Informations complémentaires</h2>
+        <p class="message">{{ quote.details }}</p>
+    {% endif %}
+
+    <p style="margin-top:20px;">Répondez directement à cet email pour écrire à l'internaute.</p>
+    <p style="text-align:center;"><a class="button" href="{{ url('admin_quote_show', {id: quote.id}) }}">Voir le devis dans l'administration</a></p>
+{% endblock %}

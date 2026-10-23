@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Information | {{ settings.siteTitle }}{% endblock %}
+{% block meta_robots %}noindex{% endblock %}
+
+{% block body %}
+    <div class="rich-text">
+        <h1>Information</h1>
+        <h2>Envoi de message</h2>
+        {% for message in messages %}
+            <p style="margin-top:20px;">
+                {% if message == 'quote_sent' %}
+                    Votre demande de tarif en ligne vient d'être envoyée sur votre adresse mail
+                    (<span style="color:#ffffff;">pensez à vérifier vos courriers indésirables</span>),
+                    merci de nous avoir contacté, nous vous répondrons dans les plus brefs délais.
+                {% elseif message == 'contact_sent' %}
+                    Votre message vient d'être envoyé, merci de nous avoir contacté, nous vous répondrons dans les plus brefs délais.
+                {% endif %}
+            </p>
+        {% endfor %}
+    </div>
+{% endblock %}

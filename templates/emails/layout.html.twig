@@ -1,0 +1,70 @@
+{% apply inline_css %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>{{ email.subject }}</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #262927; font-family: 'Trebuchet MS', Tahoma, Arial, Helvetica, sans-serif; color: #2b2b2b; }
+        .wrapper { width: 100%; background-color: #262927; padding: 24px 0; }
+        .container { width: 600px; max-width: 100%; margin: 0 auto; }
+        .header { background-color: #181b19; padding: 28px 24px; text-align: center; border-bottom: 3px solid #ff00e1; }
+        .brand { font-size: 28px; font-weight: bold; letter-spacing: 1px; margin: 0; }
+        .brand-pink { color: #ff00e1; }
+        .brand-yellow { color: #fff000; }
+        .tagline { color: #c1bcac; font-size: 13px; margin: 6px 0 0; }
+        .content { background-color: #ffffff; padding: 28px 28px 20px; font-size: 15px; line-height: 1.6; }
+        h1 { font-size: 22px; color: #181b19; margin: 0 0 16px; }
+        h2 { font-size: 16px; color: #ffffff; background-color: #1f2320; padding: 8px 12px; margin: 26px 0 12px; border-left: 4px solid #fff000; }
+        p { margin: 0 0 12px; }
+        a { color: #c400ad; }
+        .details { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .details th { text-align: left; color: #6b6b6b; font-weight: normal; padding: 6px 12px 6px 0; width: 42%; vertical-align: top; border-bottom: 1px solid #eeeeee; }
+        .details td { padding: 6px 0; color: #181b19; vertical-align: top; border-bottom: 1px solid #eeeeee; }
+        .price { background-color: #181b19; color: #ffffff; text-align: center; padding: 22px 16px; margin: 22px 0; border-radius: 6px; }
+        .price-label { color: #c1bcac; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        .price-amount { color: #fff000; font-size: 40px; font-weight: bold; margin: 6px 0 4px; }
+        .price-note { color: #ff00e1; font-size: 13px; margin: 0; }
+        .note { background-color: #fff8fe; border-left: 4px solid #ff00e1; padding: 10px 14px; font-size: 14px; }
+        .button { display: inline-block; background-color: #ff00e1; color: #ffffff !important; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-weight: bold; }
+        .message { white-space: pre-line; background-color: #f6f6f6; padding: 12px 14px; border-radius: 4px; }
+        .footer { background-color: #1f2320; color: #c1bcac; padding: 20px 24px; font-size: 12px; line-height: 1.6; text-align: center; }
+        .footer a { color: #ff00e1; }
+        .legal { color: #8d8d8d; font-size: 10px; margin-top: 12px; }
+    </style>
+</head>
+<body>
+    <table role="presentation" class="wrapper" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <table role="presentation" class="container" cellpadding="0" cellspacing="0" align="center">
+                    <tr>
+                        <td class="header">
+                            <p class="brand"><span class="brand-pink">Disco-Tek</span> <span class="brand-yellow">Animation</span></p>
+                            <p class="tagline">Animation musicale - Disc Jockey en Normandie</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">
+                            {% block content %}{% endblock %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="footer">
+                            <strong>{{ settings.siteName }}</strong><br>
+                            {% if settings.address %}{{ settings.address }}<br>{% endif %}
+                            {% if settings.phone %}Tél : {{ settings.phone }}<br>{% endif %}
+                            Mail : <a href="mailto:{{ settings.publicEmail }}">{{ settings.publicEmail }}</a><br>
+                            <a href="{{ url('app_home') }}">{{ url('app_home')|trim('/', 'right') }}</a>
+                            {% block footer_extra %}{% endblock %}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+{% endapply %}

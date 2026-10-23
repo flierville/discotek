@@ -1,0 +1,99 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ party.title }}{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <a href="{{ path('admin_party_index') }}" class="text-sm text-slate-500 hover:text-brand-600">&larr; Photos de soirées</a>
+            <h1 class="page-title mt-1">{{ party.title }}</h1>
+            <p class="mt-1 text-sm text-slate-500">
+                Code soirée : <code class="rounded bg-slate-100 px-2 py-0.5 font-semibold text-slate-800">{{ party.accessCode }}</code>
+                - {{ party.photos|length }} photo{{ party.photos|length > 1 ? 's' }}
+            </p>
+        </div>
+        <div class="flex gap-3">
+            <a href="{{ path('app_party_gallery', {slug: party.slug}) }}" target="_blank" class="btn btn-secondary">
+                {{ include('admin/_icon.html.twig', {name: 'eye', class: 'size-4'}) }} Voir la galerie
+            </a>
+            {{ include('admin/_delete_button.html.twig', {url: path('admin_party_delete', {id: party.id}), token_id: 'delete-party-' ~ party.id, message: 'Supprimer la soirée « ' ~ party.title ~ ' » et ses ' ~ party.photos|length ~ ' photos ? Cette action est définitive.', label: 'Supprimer'}) }}
+        </div>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-3">
+        <div class="space-y-6 xl:col-span-2">
+            {# Upload: pictures and/or zip archives, sent in chunks with a queue. #}
+            <section class="card" data-controller="photo-uploader"
+                     data-photo-uploader-url-value="{{ path('admin_party_upload', {id: party.id}) }}"
+                     data-photo-uploader-token-value="{{ csrf_token('party-photos-' ~ party.id) }}">
+                <div class="card-header">
+                    <h2 class="card-title">Ajouter des photos</h2>
+                    <span class="text-xs text-slate-500" data-photo-uploader-target="summary"></span>
+                </div>
+                <div class="card-body">
+                    <label class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 px-6 py-10 text-center transition hover:border-brand-500 hover:bg-brand-50"
+                           data-photo-uploader-target="dropzone"
+                           data-action="dragover->photo-uploader#dragOver dragleave->photo-uploader#dragLeave drop->photo-uploader#drop">
+                        <span class="flex size-12 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                            {{ include('admin/_icon.html.twig', {name: 'upload', class: 'size-6'}) }}
+                        </span>
+                        <span class="mt-3 text-sm font-semibold text-slate-900">Glissez-déposez vos photos ou un fichier .zip ici</span>
+                        <span class="mt-1 text-xs text-slate-500">ou cliquez pour choisir - JPG, PNG, WEBP, GIF ou ZIP - plusieurs fichiers à la fois</span>
+                        <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,.zip,application/zip" class="sr-only"
+                               data-photo-uploader-target="input" data-action="change->photo-uploader#select">
+                    </label>
+
+                    <div class="mt-4 hidden" data-photo-uploader-target="progressPanel">
+                        <div class="mb-2 flex justify-between text-xs font-medium text-slate-600">
+                            <span data-photo-uploader-target="progressLabel">Envoi en cours...</span>
+                            <span data-photo-uploader-target="progressPercent">0 %</span>
+                        </div>
+                        <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full w-0 rounded-full bg-brand-600 transition-all" data-photo-uploader-target="progressBar"></div>
+                        </div>
+                        <ul class="mt-4 max-h-56 space-y-1 overflow-y-auto text-xs" data-photo-uploader-target="queue"></ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 px-5 py-4">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-slate-900">Photos de la soirée</h3>
+                        <span class="text-xs text-slate-500"><span data-photo-uploader-target="count">{{ party.photos|length }}</span> photo(s)</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6" data-photo-uploader-target="grid">
+                        {% for photo in party.photos %}
+                            {{ include('admin/party/_photo.html.twig') }}
+                        {% endfor %}
+                    </div>
+                    {% if party.photos is empty %}
+                        <p class="py-6 text-center text-sm text-slate-500" data-photo-uploader-target="empty">Aucune photo pour le moment.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <div class="space-y-6">
+            <section class="card">
+                <div class="card-header"><h2 class="card-title">Informations</h2></div>
+                {{ include('admin/party/_form.html.twig', {submit_label: 'Enregistrer'}) }}
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Consultations</h2>
+                    <span class="badge badge-pink">{{ accessCount }}</span>
+                </div>
+                <ul class="max-h-96 divide-y divide-slate-100 overflow-y-auto text-sm">
+                    {% for log in accessLogs %}
+                        <li class="px-5 py-3">
+                            <p class="font-medium text-slate-900">{{ log.name }} <span class="font-normal text-slate-500">- {{ log.city }}</span></p>
+                            <p class="text-xs text-slate-500">{{ log.email }} - {{ log.createdAt|format_datetime('short', 'short', locale: 'fr') }}</p>
+                        </li>
+                    {% else %}
+                        <li class="px-5 py-6 text-center text-slate-500">Personne n'a encore consulté la galerie.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    </div>
+{% endblock %}

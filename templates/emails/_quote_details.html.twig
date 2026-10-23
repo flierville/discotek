@@ -1,0 +1,9 @@
+<table role="presentation" class="details" cellpadding="0" cellspacing="0">
+    <tr><th>Votre nom</th><td>{{ quote.fullName }}</td></tr>
+    <tr><th>Votre mail</th><td>{{ quote.email }}</td></tr>
+    <tr><th>Votre téléphone</th><td>{{ quote.phone }}</td></tr>
+    <tr><th>Type d'événement</th><td>{{ quote.eventType ?? 'Non précisé' }}</td></tr>
+    <tr><th>Nombre de personnes</th><td>{{ quote.guestRange }}</td></tr>
+    <tr><th>Lieu</th><td>{{ quote.city }}{% if quote.postalCode %} ({{ quote.postalCode }}){% endif %}</td></tr>
+    <tr><th>Date</th><td>{{ quote.eventDate|format_date('full', locale: 'fr')|capitalize }}</td></tr>
+</table>

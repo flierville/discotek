@@ -1,0 +1,60 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Devis{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="page-title">Devis</h1>
+            <p class="mt-1 text-sm text-slate-500">Demandes de tarif envoyées depuis le formulaire « Devis en ligne ».</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            {{ include('admin/_search.html.twig', {placeholder: 'Nom, email, ville...'}) }}
+            <a href="{{ path('admin_quote_rules') }}" class="btn btn-secondary">
+                {{ include('admin/_icon.html.twig', {name: 'adjustments', class: 'size-4'}) }} Règles de calcul
+            </a>
+        </div>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th>Reçu le</th>
+                        <th>Client</th>
+                        <th>Événement</th>
+                        <th>Date soirée</th>
+                        <th>Lieu</th>
+                        <th class="text-right">Montant</th>
+                        <th><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quote in quotes %}
+                        <tr class="{{ quote.read ? '' : 'font-semibold' }}">
+                            <td class="whitespace-nowrap">
+                                {% if not quote.read %}<span class="mr-1 inline-block size-2 rounded-full bg-brand-500" title="Non lu"></span>{% endif %}
+                                {{ quote.createdAt|format_datetime('short', 'short', locale: 'fr') }}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_quote_show', {id: quote.id}) }}" class="text-slate-900 hover:text-brand-600">{{ quote.fullName }}</a>
+                                <p class="text-xs font-normal text-slate-500">{{ quote.email }}</p>
+                            </td>
+                            <td>{{ quote.eventType ?? '-' }}<p class="text-xs font-normal text-slate-500">{{ quote.guestRange }}</p></td>
+                            <td class="whitespace-nowrap">{{ quote.eventDate|format_date('medium', locale: 'fr') }}</td>
+                            <td>{{ quote.city }}</td>
+                            <td class="text-right whitespace-nowrap text-slate-900">{{ quote.totalPrice|euros }}</td>
+                            <td class="text-right whitespace-nowrap">
+                                <a href="{{ path('admin_quote_show', {id: quote.id}) }}" class="btn btn-secondary btn-sm">Voir</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="7" class="py-10 text-center text-slate-500">Aucun devis{{ search ? ' pour cette recherche' }}.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ include('admin/_pagination.html.twig', {paginator: quotes}) }}
+    </div>
+{% endblock %}

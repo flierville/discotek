@@ -1,0 +1,8 @@
+{# Parameters: url, token_id, message, label (optional), small (optional) #}
+<form method="post" action="{{ url }}" data-controller="confirm" data-confirm-message-value="{{ message }}" data-action="confirm#ask" class="inline">
+    <input type="hidden" name="_token" value="{{ csrf_token(token_id) }}">
+    <button type="submit" class="btn btn-ghost-danger{{ small|default(false) ? ' btn-sm' }}" title="{{ label|default('Supprimer') }}">
+        {{ include('admin/_icon.html.twig', {name: 'trash', class: 'size-4'}) }}
+        {%- if label|default(null) %} {{ label }}{% endif -%}
+    </button>
+</form>

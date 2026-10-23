@@ -1,24 +1,75 @@
+{% set settings = site_settings() %}
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{{ settings.siteTitle }}{% endblock %}</title>
+        <meta name="author" content="{{ settings.siteName }}">
+        <meta name="keywords" content="{% block meta_keywords %}{{ settings.metaKeywords }}{% endblock %}">
+        <meta name="description" content="{% block meta_description %}{{ settings.metaDescription }}{% endblock %}">
+        <meta name="robots" content="{% block meta_robots %}all{% endblock %}">
+        <meta name="rating" content="General">
+        <meta name="theme-color" content="#181b19">
+        {% block canonical %}<link rel="canonical" href="{{ app.request.schemeAndHttpHost ~ app.request.pathInfo }}">{% endblock %}
+        <link rel="preload" href="{{ asset('fonts/DiscoDiva.ttf') }}" as="font" type="font/ttf" crossorigin>
+        {# The stylesheet is imported by assets/app.js (AssetMapper adds the <link> tag). #}
+        {% block stylesheets %}{% endblock %}
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
 
-        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphp_hot_reload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+        {% if settings.googleAnalyticsId %}
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.googleAnalyticsId|url_encode }}"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', {{ settings.googleAnalyticsId|json_encode|raw }}, { anonymize_ip: true });
+            </script>
         {% endif %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div class="site-frame">
+            <div class="site-wrapper">
+                <header>
+                    <a href="{{ path('app_home') }}" class="site-header" title="Accueil">
+                        <span class="site-header__title"><span class="text-disco-pink">Disco-Tek</span>&nbsp;<span class="text-disco-yellow">Animation</span></span>
+                    </a>
+                </header>
+
+                <div class="site-body">
+                {# Content first in the HTML like the legacy site (better for SEO), the menu is placed on the left by CSS. #}
+                <main id="contenu" class="site-content">
+                    {% block body %}{% endblock %}
+                </main>
+
+                <nav class="site-menu" aria-label="Menu principal" data-controller="menu" data-menu-open-class="site-menu--open">
+                    <button type="button" class="site-menu__toggle" data-action="menu#toggle" data-menu-target="button" aria-expanded="false" aria-controls="menu-principal">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+                        Menu
+                    </button>
+                    <div id="menu-principal" class="site-menu__list">
+                        {% for menu_page in menu_pages() %}
+                            {% set menu_url = page_path(menu_page) %}
+                            <p class="site-menu__item">
+                                <a href="{{ menu_url }}" title="{{ menu_page.title }}"
+                                   {% if menu_url == app.request.pathInfo %}aria-current="page"{% endif %}
+                                   {% if menu_page.menuColor %}style="color:{{ menu_page.menuColor }};--menu-color:{{ menu_page.menuColor }}"{% endif %}>{{ menu_page.title }}</a>
+                            </p>
+                        {% endfor %}
+                    </div>
+                </nav>
+                </div>
+            </div>
+
+            <footer class="site-footer">
+                &copy; Disco-Tek Animation {{ 'now'|date('Y') }}
+                {% for footer_page in footer_pages() %}
+                    - <a href="{{ page_path(footer_page) }}" title="{{ footer_page.title }}">{{ footer_page.title }}</a>
+                {% endfor %}
+            </footer>
+        </div>
     </body>
 </html>

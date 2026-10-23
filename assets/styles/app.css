@@ -1,3 +1,645 @@
-body {
-    background-color: skyblue;
+/*
+ * Public site. Desktop rendering reproduces the legacy stylesheet (pages/visuel/style.css):
+ * 1100px frame, 300px menu on the left, 740px content, same colors and fonts.
+ * Below 1120px the layout becomes fluid, below 768px the menu folds into a button.
+ */
+@import "tailwindcss";
+
+@source "../../templates/front";
+@source "../../templates/base.html.twig";
+@source "../controllers";
+
+@font-face {
+    font-family: 'DiscoDiva';
+    src: url('../fonts/DiscoDiva.ttf') format('truetype');
+    font-display: swap;
+}
+
+@theme {
+    --breakpoint-desk: 70rem; /* 1120px: legacy fixed width layout */
+
+    --font-disco: 'DiscoDiva', Arial, serif;
+    --font-trebuchet: 'Trebuchet MS', Tahoma, Arial, Helvetica, sans-serif;
+    --font-lucida: 'Lucida Grande', Verdana, Arial, sans-serif;
+    --font-verdana: Verdana, Helvetica, Arial, sans-serif;
+
+    --color-disco-page: #262927;
+    --color-disco-frame: #181b19;
+    --color-disco-frame-border: #383c37;
+    --color-disco-panel: #1f2320;
+    --color-disco-text: #999999;
+    --color-disco-content: #c1bcac;
+    --color-disco-pink: #ff00e1;
+    --color-disco-yellow: #fff000;
+    --color-disco-field: #efefef;
+}
+
+@layer base {
+    body {
+        background-color: var(--color-disco-page);
+        color: var(--color-disco-text);
+    }
+
+    a,
+    a:visited,
+    a:hover,
+    a:active {
+        color: #ffffff;
+        text-decoration: none;
+    }
+}
+
+@layer components {
+    /* --- Frame ------------------------------------------------------------------------- */
+    .site-frame {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 1100px;
+    }
+
+    .site-wrapper {
+        margin-top: 20px;
+        background-color: var(--color-disco-frame);
+        border: 1px solid var(--color-disco-frame-border);
+        font-family: var(--font-trebuchet);
+        font-size: 0.875rem;
+        line-height: 1.4em;
+        display: flow-root;
+
+        @variant desk {
+            font-size: 0.7em;
+        }
+    }
+
+    .site-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        margin: 20px auto;
+        padding: 10px 8px 0;
+        height: clamp(110px, 18.2vw, 200px);
+        background: url('../images/header.jpg') no-repeat top center;
+        background-size: auto 100%;
+    }
+
+    /* Legacy: menu (302px) + content (740px) inside the 1100px frame. */
+    .site-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+
+        @variant md {
+            grid-template-columns: 242px minmax(0, 1fr);
+            column-gap: 16px;
+            padding: 0 20px;
+        }
+
+        @variant desk {
+            grid-template-columns: 302px 740px;
+            column-gap: 16px;
+        }
+    }
+
+    .site-header__title {
+        font-family: var(--font-disco);
+        font-weight: bold;
+        font-size: clamp(22px, 3.7vw, 40px);
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    /* --- Menu (legacy .sidebar) ------------------------------------------------------------ */
+    .site-menu {
+        order: -1;
+        margin: 0 10px 19px;
+        padding: 10px 0;
+        background-color: var(--color-disco-panel);
+        border: 1px solid var(--color-disco-page);
+        color: #c1bcac;
+
+        @variant md {
+            grid-column: 1;
+            grid-row: 1;
+            min-height: 400px;
+            margin: 0 0 19px;
+        }
+    }
+
+    .site-menu__toggle {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 8px 0;
+        font-family: var(--font-disco);
+        font-size: 16px;
+        letter-spacing: 5px;
+        color: var(--color-disco-pink);
+        cursor: pointer;
+
+        @variant md {
+            display: none;
+        }
+    }
+
+    .site-menu__list {
+        display: none;
+
+        @variant md {
+            display: block;
+        }
+    }
+
+    .site-menu--open .site-menu__list {
+        display: block;
+    }
+
+    .site-menu__item {
+        font-family: var(--font-disco);
+        font-size: 14px;
+        text-align: center;
+        letter-spacing: 5px;
+    }
+
+    .site-menu__item a,
+    .site-menu__item a:visited {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+        padding-top: 10px;
+        height: 30px;
+        color: var(--color-disco-pink);
+    }
+
+    .site-menu__item a:hover,
+    .site-menu__item a:focus-visible,
+    .site-menu__item a[aria-current='page'] {
+        color: var(--color-disco-yellow);
+        background-color: var(--color-disco-frame);
+    }
+
+    /* Entries with a custom color (legacy "color=#ff0000") keep it on hover. */
+    .site-menu__item a[style]:hover {
+        color: var(--menu-color);
+    }
+
+    /* --- Content (legacy #container) -------------------------------------------------------- */
+    .site-content {
+        margin: 0 10px 19px;
+        color: var(--color-disco-content);
+        font-size: 1.1em;
+        overflow-wrap: break-word;
+
+        @variant md {
+            grid-column: 2;
+            grid-row: 1;
+            margin: 0 0 19px;
+        }
+    }
+
+    .site-footer {
+        margin: 10px auto;
+        padding: 5px 10px;
+        font-size: 14px;
+        color: var(--color-disco-pink);
+        text-align: right;
+
+        @variant desk {
+            padding: 5px 0;
+        }
+    }
+
+    .site-footer a,
+    .site-footer a:visited {
+        color: var(--color-disco-pink);
+    }
+
+    /* --- Forms (legacy .form-row / .label / .annonce_description) ---------------------------- */
+    .legacy-form {
+        margin-bottom: 50px;
+    }
+
+    .form-row {
+        display: grid;
+        gap: 4px;
+        padding: 5px 0;
+
+        @variant sm {
+            grid-template-columns: 250px minmax(0, 1fr);
+            column-gap: 5px;
+        }
+    }
+
+    .form-row__label {
+        font-family: var(--font-verdana);
+        font-size: 10pt;
+        font-weight: bold;
+        color: var(--color-disco-content);
+
+        @variant sm {
+            text-align: right;
+            padding-top: 2px;
+        }
+    }
+
+    .form-row__required {
+        color: #ff0000;
+    }
+
+    .form-row__help {
+        font-style: italic;
+
+        @variant sm {
+            grid-column: 2;
+        }
+    }
+
+    .form-row__field {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 4px 10px;
+    }
+
+    .legacy-form input[type='text'],
+    .legacy-form input[type='email'],
+    .legacy-form input[type='tel'],
+    .legacy-form input[type='date'],
+    .legacy-form textarea,
+    .legacy-form select {
+        width: 100%;
+        padding: 2px;
+        border: 1px solid #181b19;
+        background-color: var(--color-disco-field);
+        color: #000000;
+        font-family: var(--font-verdana);
+        font-size: 16px; /* avoids the zoom of iOS on focus */
+
+        @variant sm {
+            font-size: 11px;
+        }
+    }
+
+    .legacy-form input[type='text'],
+    .legacy-form input[type='email'],
+    .legacy-form input[type='tel'] {
+        @variant sm {
+            width: 250px;
+        }
+    }
+
+    .legacy-form input[type='date'] {
+        @variant sm {
+            width: 140px;
+        }
+    }
+
+    .legacy-form textarea {
+        min-height: 150px;
+
+        @variant sm {
+            width: 300px;
+        }
+    }
+
+    .legacy-form textarea.form-row__address {
+        min-height: 70px;
+    }
+
+    .legacy-form select {
+        border-color: #999999;
+        background-color: #f7f9fe;
+        color: #555555;
+
+        @variant sm {
+            width: 260px;
+            font-size: 12px;
+        }
+    }
+
+    .legacy-form input[type='checkbox'] {
+        accent-color: var(--color-disco-pink);
+        margin-right: 4px;
+    }
+
+    .legacy-form .is-invalid {
+        border-color: #ff0000;
+    }
+
+    .form-field-error {
+        color: #ff0000;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .legacy-form__separator {
+        width: 75%;
+        margin: 10px auto;
+        border: 0;
+        border-top: 1px solid #563635;
+    }
+
+    .legacy-form__submit {
+        text-align: center;
+        padding-top: 30px;
+    }
+
+    .legacy-button {
+        border: 1px solid #cccccc;
+        background-color: var(--color-disco-field);
+        color: #000000;
+        font-family: var(--font-verdana);
+        font-size: 13px;
+        padding: 4px 18px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #ffffff;
+        }
+
+        &[disabled] {
+            opacity: 0.6;
+            cursor: progress;
+        }
+    }
+
+    .form-errors {
+        background-color: #bdbdbd;
+        margin-bottom: 20px;
+        padding: 6px 0;
+    }
+
+    .form-errors__title {
+        color: #ff0000;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .form-errors li {
+        margin: 0 0 5px 30px;
+        list-style-type: circle;
+        color: #ff0000;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .honeypot {
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    /* --- City autocomplete (legacy jQuery UI "dark-hive" look) ----------------------------- */
+    .autocomplete {
+        position: relative;
+        width: 100%;
+
+        @variant sm {
+            width: 250px;
+        }
+    }
+
+    .autocomplete__list {
+        position: absolute;
+        z-index: 20;
+        left: 0;
+        top: 100%;
+        width: max(100%, 320px);
+        max-width: calc(100vw - 30px);
+        max-height: 220px;
+        overflow-y: auto;
+        background: #000000;
+        border: 1px solid #555555;
+        box-shadow: 0 6px 16px rgb(0 0 0 / 0.6);
+    }
+
+    .autocomplete__option {
+        padding: 6px 8px;
+        font-size: 13px;
+        color: #ffffff;
+        cursor: pointer;
+
+        &[aria-selected='true'],
+        &:hover {
+            background: #0972a5;
+        }
+    }
+
+    /* --- Party gallery ---------------------------------------------------------------------- */
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .gallery__item {
+        display: block;
+        aspect-ratio: 1;
+        overflow: hidden;
+        background-color: #000000;
+        border: 1px solid var(--color-disco-frame-border);
+        cursor: zoom-in;
+
+        & img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        &:hover img,
+        &:focus-visible img {
+            transform: scale(1.08);
+        }
+    }
+}
+
+/* --- Editable content (legacy h1, h2, h3, ul...) ---------------------------------------------
+ * Outside of the Tailwind layers on purpose: it also styles the content inside the WYSIWYG editor,
+ * whose own stylesheet is not layered and would win otherwise.
+ */
+.rich-text h1,
+.rich-text h2 {
+    font-family: var(--font-lucida);
+    background-color: var(--color-disco-panel);
+    padding: 5px 0 5px 5px;
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--color-disco-yellow);
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 20px;
+    border-bottom: 1px dotted var(--color-disco-yellow);
+}
+
+.rich-text h2 {
+    padding-left: 15px;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.rich-text h3 {
+    color: #563635;
+    font-size: 10pt;
+    font-family: var(--font-verdana);
+    font-stretch: expanded;
+    margin: 10px;
+    text-decoration: underline;
+    background: url('../images/puce.png') left no-repeat;
+    padding-left: 15px;
+}
+
+.rich-text ul {
+    list-style-image: url('../images/puce.png');
+    margin-left: 30px;
+    margin-top: 15px;
+}
+
+.rich-text ol {
+    list-style: decimal;
+    margin-left: 30px;
+    margin-top: 15px;
+}
+
+.rich-text li {
+    margin-top: 5px;
+}
+
+.rich-text strong,
+.rich-text b {
+    font-weight: bold;
+}
+
+.rich-text em,
+.rich-text i {
+    font-style: italic;
+}
+
+.rich-text u {
+    text-decoration: underline;
+}
+
+.rich-text img {
+    display: inline-block;
+    height: auto;
+}
+
+.rich-text iframe {
+    max-width: 100%;
+}
+
+.rich-text table {
+    max-width: 100%;
+}
+
+/* --- Lightbox ----------------------------------------------------------------------------- */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(0 0 0 / 0.9);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    touch-action: pan-y;
+
+    &[hidden] {
+        display: none;
+    }
+
+    &.is-open {
+        opacity: 1;
+    }
+}
+
+.lightbox__figure {
+    margin: 0;
+    max-width: 94vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lightbox__image {
+    max-width: 94vw;
+    max-height: 82vh;
+    object-fit: contain;
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.8);
+    transform-origin: center;
+    transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.lightbox__image.is-zooming {
+    transition: none;
+}
+
+.lightbox__image.is-loading {
+    opacity: 0.3;
+}
+
+.lightbox__caption {
+    margin-top: 10px;
+    color: #ffffff;
+    font-family: var(--font-trebuchet);
+    font-size: 14px;
+}
+
+.lightbox__button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 9999px;
+    background-color: rgb(0 0 0 / 0.5);
+    color: #ffffff;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--color-disco-pink);
+    }
+}
+
+.lightbox__button--prev {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox__button--next {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox__button--close {
+    top: 12px;
+    right: 12px;
+}
+
+.lightbox__button--download {
+    top: 12px;
+    right: 72px;
+    font-size: 20px;
+}
+
+.lightbox__counter {
+    position: absolute;
+    top: 22px;
+    left: 20px;
+    color: #ffffff;
+    font-family: var(--font-trebuchet);
+    font-size: 14px;
 }

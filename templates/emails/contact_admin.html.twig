@@ -1,0 +1,21 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block content %}
+    <h1>Nouvelle demande de contact</h1>
+    <p>Un internaute a formulé une demande de contact :</p>
+
+    <table role="presentation" class="details" cellpadding="0" cellspacing="0">
+        <tr><th>Date</th><td>{{ message.createdAt|format_datetime('long', 'short', locale: 'fr') }}</td></tr>
+        <tr><th>Nom</th><td>{{ message.name }}</td></tr>
+        <tr><th>Mail</th><td><a href="mailto:{{ message.email }}">{{ message.email }}</a></td></tr>
+        <tr><th>Téléphone</th><td>{% if message.phone %}<a href="tel:{{ message.phone|replace({' ': '', '.': ''}) }}">{{ message.phone }}</a>{% else %}-{% endif %}</td></tr>
+        <tr><th>Newsletter</th><td>{{ message.newsletter ? 'Oui' : 'Non' }}</td></tr>
+        <tr><th>IP</th><td>{{ message.ipAddress ?? '-' }}</td></tr>
+    </table>
+
+    <h2>Message</h2>
+    <p class="message">{{ message.message }}</p>
+
+    <p style="margin-top:20px;">Répondez directement à cet email pour écrire à l'internaute.</p>
+    <p style="text-align:center;"><a class="button" href="{{ url('admin_contact_show', {id: message.id}) }}">Voir dans l'administration</a></p>
+{% endblock %}

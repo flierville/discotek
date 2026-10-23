@@ -1,0 +1,47 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Contacts{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="page-title">Demandes de contact</h1>
+            <p class="mt-1 text-sm text-slate-500">Historique des messages envoyés avec le formulaire de contact.</p>
+        </div>
+        {{ include('admin/_search.html.twig', {placeholder: 'Nom, email, message...'}) }}
+    </div>
+
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th>Reçu le</th>
+                        <th>Expéditeur</th>
+                        <th>Message</th>
+                        <th><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for message in messages %}
+                        <tr class="{{ message.read ? '' : 'font-semibold' }}">
+                            <td class="whitespace-nowrap">
+                                {% if not message.read %}<span class="mr-1 inline-block size-2 rounded-full bg-brand-500" title="Non lu"></span>{% endif %}
+                                {{ message.createdAt|format_datetime('short', 'short', locale: 'fr') }}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_contact_show', {id: message.id}) }}" class="text-slate-900 hover:text-brand-600">{{ message.name }}</a>
+                                <p class="text-xs font-normal text-slate-500">{{ message.email }}</p>
+                            </td>
+                            <td class="max-w-md truncate font-normal text-slate-600">{{ message.message|u.truncate(120, '...') }}</td>
+                            <td class="text-right"><a href="{{ path('admin_contact_show', {id: message.id}) }}" class="btn btn-secondary btn-sm">Lire</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4" class="py-10 text-center text-slate-500">Aucun message{{ search ? ' pour cette recherche' }}.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ include('admin/_pagination.html.twig', {paginator: messages}) }}
+    </div>
+{% endblock %}

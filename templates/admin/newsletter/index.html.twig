@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Newsletter{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="page-title">Abonnés à la newsletter</h1>
+            <p class="mt-1 text-sm text-slate-500">Visiteurs ayant coché « Inscription à la Newsletter » dans un formulaire.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            {{ include('admin/_search.html.twig', {placeholder: 'Email, nom, ville...'}) }}
+            <a href="{{ path('admin_newsletter_export') }}" class="btn btn-secondary">
+                {{ include('admin/_icon.html.twig', {name: 'download', class: 'size-4'}) }} Export CSV
+            </a>
+        </div>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table">
+                <thead class="bg-slate-50">
+                    <tr><th>Email</th><th>Nom</th><th>Ville</th><th>Origine</th><th>Inscrit le</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for subscriber in subscribers %}
+                        <tr>
+                            <td class="font-medium text-slate-900">{{ subscriber.email }}</td>
+                            <td>{{ subscriber.name ?? '-' }}</td>
+                            <td>{{ subscriber.city ?? '-' }}{{ subscriber.postalCode ? ' (' ~ subscriber.postalCode ~ ')' }}</td>
+                            <td><span class="badge badge-gray">{{ subscriber.source }}</span></td>
+                            <td class="whitespace-nowrap">{{ subscriber.createdAt|format_date('medium', locale: 'fr') }}</td>
+                            <td class="text-right">
+                                {{ include('admin/_delete_button.html.twig', {url: path('admin_newsletter_delete', {id: subscriber.id}), token_id: 'delete-subscriber-' ~ subscriber.id, message: 'Désinscrire ' ~ subscriber.email ~ ' de la newsletter ?', small: true}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" class="py-10 text-center text-slate-500">Aucun abonné{{ search ? ' pour cette recherche' }}.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ include('admin/_pagination.html.twig', {paginator: subscribers}) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,6 @@
+symfonycasts_tailwind:
+    # Standalone Tailwind CLI: no Node.js nor webpack needed.
+    binary_version: 'v4.1.11'
+    input_css:
+        - '%kernel.project_dir%/assets/styles/app.css'
+        - '%kernel.project_dir%/assets/styles/admin.css'

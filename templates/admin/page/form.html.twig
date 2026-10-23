@@ -1,0 +1,61 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ page.id ? page.title : 'Nouvelle page' }}{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <a href="{{ path('admin_page_index') }}" class="text-sm text-slate-500 hover:text-brand-600">&larr; Pages</a>
+            <h1 class="page-title mt-1">{{ page.id ? page.title : 'Nouvelle page' }}</h1>
+        </div>
+        {% if page.id %}
+            <a href="{{ page_path(page) }}" target="_blank" class="btn btn-secondary">
+                {{ include('admin/_icon.html.twig', {name: 'eye', class: 'size-4'}) }} Voir sur le site
+            </a>
+        {% endif %}
+    </div>
+
+    {{ form_start(form, {attr: {'data-controller': 'slug', 'data-slug-locked-value': page.id ? 'true' : 'false'}}) }}
+        <div class="grid gap-6 lg:grid-cols-3">
+            <div class="space-y-6 lg:col-span-2">
+                <section class="card card-body space-y-5">
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.content, {attr: {
+                        'data-controller': 'wysiwyg',
+                        'data-wysiwyg-upload-url-value': path('admin_editor_upload'),
+                        'data-wysiwyg-upload-token-value': csrf_token('editor-upload'),
+                        'data-wysiwyg-content-css-value': asset('styles/app.css'),
+                        rows: 20,
+                    }}) }}
+                </section>
+
+                <section class="card">
+                    <div class="card-header"><h2 class="card-title">Référencement (SEO)</h2></div>
+                    <div class="card-body space-y-5">
+                        {{ form_row(form.metaTitle) }}
+                        {{ form_row(form.metaDescription) }}
+                        {{ form_row(form.metaKeywords) }}
+                    </div>
+                </section>
+            </div>
+
+            <div class="space-y-6">
+                <section class="card card-body space-y-5">
+                    {{ form_row(form.published) }}
+                    {{ form_row(form.slug) }}
+                    {{ form_row(form.kind) }}
+                </section>
+                <section class="card">
+                    <div class="card-header"><h2 class="card-title">Menu</h2></div>
+                    <div class="card-body space-y-5">
+                        {{ form_row(form.inMenu) }}
+                        {{ form_row(form.inFooter) }}
+                        {{ form_row(form.position) }}
+                        {{ form_row(form.menuColor) }}
+                    </div>
+                </section>
+                <button type="submit" class="btn btn-primary w-full">Enregistrer</button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'front/page/_layout.html.twig' %}
+
+{% form_theme form 'front/form/theme.html.twig' %}
+
+{% block page_extra %}
+    {{ include('front/form/_errors_summary.html.twig') }}
+
+    {{ form_start(form, {attr: {class: 'legacy-form', id: 'form_devis', novalidate: 'novalidate', 'data-controller': 'submit-once'}}) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.newsletter) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.postalAddress, {attr: {class: 'form-row__address'}}) }}
+
+        <hr class="legacy-form__separator">
+
+        {{ form_row(form.eventType) }}
+        {{ form_row(form.guestRange) }}
+        {{ form_row(form.location) }}
+        {{ form_row(form.eventDate) }}
+        {{ form_row(form.details) }}
+        {{ form_rest(form) }}
+
+        <div class="legacy-form__submit">
+            <button type="submit" class="legacy-button" data-submit-once-target="button">Valider</button>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,89 @@
+{% use 'form_div_layout.html.twig' %}
+
+{# Legacy layout: bold right aligned label (250px), field, italic help text underneath. #}
+{%- block form_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~ '_help'}} -%}
+    {%- endif -%}
+    {%- if errors|length > 0 -%}
+        {%- set widget_attr = widget_attr|merge({attr: (widget_attr.attr ?? {})|merge({class: ((attr.class ?? '') ~ ' is-invalid')|trim, 'aria-invalid': 'true'})}) -%}
+    {%- endif -%}
+    <div class="form-row">
+        {{- form_label(form) -}}
+        <div class="form-row__field">
+            {{- form_widget(form, widget_attr) -}}
+            {{- form_errors(form) -}}
+        </div>
+        {{- form_help(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block form_label -%}
+    {%- if label is not same as(false) -%}
+        {%- set label = label ?: name|humanize -%}
+        <label class="form-row__label"{% if not compound %} for="{{ id }}"{% endif %}>
+            {{- label|trans({}, translation_domain) -}}
+            {%- if required %}&nbsp;<span class="form-row__required">*</span>{% endif %}&nbsp;:
+        </label>
+    {%- endif -%}
+{%- endblock form_label -%}
+
+{%- block form_help -%}
+    {%- if help is not empty -%}
+        <span id="{{ id }}_help" class="form-row__help">{{ help|trans({}, translation_domain) }}</span>
+    {%- endif -%}
+{%- endblock form_help -%}
+
+{%- block form_errors -%}
+    {%- for error in errors -%}
+        <span class="form-field-error">{{ error.message }}</span>
+    {%- endfor -%}
+{%- endblock form_errors -%}
+
+{# Newsletter checkbox: displayed in the help column, like the legacy site. #}
+{%- block checkbox_row -%}
+    <div class="form-row">
+        <span aria-hidden="true"></span>
+        <div class="form-row__field">
+            {{- form_widget(form) -}}
+            <label for="{{ id }}">{{ label|trans({}, translation_domain) }}</label>
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block honeypot_row -%}
+    <div class="honeypot" aria-hidden="true">
+        <label for="{{ id }}">{{ label }}</label>
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock honeypot_row -%}
+
+{%- block city_autocomplete_row -%}
+    <div class="form-row">
+        <label class="form-row__label" for="{{ form.name.vars.id }}">
+            {{- label|trans({}, translation_domain) -}}&nbsp;<span class="form-row__required">*</span>&nbsp;:
+        </label>
+        <div class="form-row__field">
+            <div class="autocomplete" data-controller="city-autocomplete"
+                 data-city-autocomplete-url-value="{{ path('app_city_search') }}">
+                {{- form_widget(form.name, {attr: (form.name.vars.attr)|merge({
+                    role: 'combobox',
+                    'aria-autocomplete': 'list',
+                    'aria-expanded': 'false',
+                    'aria-controls': id ~ '_list',
+                    'aria-describedby': id ~ '_help',
+                    class: errors|length > 0 ? 'is-invalid' : '',
+                })}) -}}
+                {{- form_widget(form.postalCode) -}}
+                {{- form_widget(form.latitude) -}}
+                {{- form_widget(form.longitude) -}}
+                <div id="{{ id }}_list" class="autocomplete__list" role="listbox" hidden data-city-autocomplete-target="list"></div>
+            </div>
+            {{- form_errors(form) -}}
+            {{- form_errors(form.name) -}}
+        </div>
+        {{- form_help(form) -}}
+    </div>
+{%- endblock city_autocomplete_row -%}

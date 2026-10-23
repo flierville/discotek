@@ -1,0 +1,39 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block layout %}
+<div class="flex min-h-full items-center justify-center bg-gradient-to-br from-slate-900 via-slate-900 to-fuchsia-950 px-4 py-12">
+    <div class="w-full max-w-sm">
+        <p class="mb-8 text-center text-3xl font-extrabold tracking-tight">
+            <span class="text-brand-500">Disco-Tek</span> <span class="text-yellow-300">Animation</span>
+        </p>
+        <div class="card p-8">
+            <h1 class="mb-6 text-xl font-bold text-slate-900">Administration</h1>
+
+            {% if error %}
+                <div class="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-600/20 ring-inset" role="alert">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post" class="space-y-5">
+                <div>
+                    <label for="email" class="form-label">Adresse email</label>
+                    <input type="email" id="email" name="email" value="{{ last_username }}" class="form-input" autocomplete="username" required autofocus>
+                </div>
+                <div>
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" id="password" name="password" class="form-input" autocomplete="current-password" required>
+                </div>
+                <label class="flex items-center gap-2 text-sm text-slate-600">
+                    <input type="checkbox" name="_remember_me" class="form-checkbox"> Rester connecté
+                </label>
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="btn btn-primary w-full">Se connecter</button>
+            </form>
+        </div>
+        <p class="mt-6 text-center text-xs text-slate-400">Mot de passe oublié ? Contactez le webmaster.</p>
+    </div>
+</div>
+{% endblock %}

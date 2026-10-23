@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ party.title }} | {{ settings.siteTitle }}{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block body %}
+    <div class="rich-text">
+        <h1>{{ party.title }}</h1>
+        {% if party.eventDate %}
+            <p>Soirée du {{ party.eventDate|format_date('long', locale: 'fr') }} - {{ party.photos|length }} photo{{ party.photos|length > 1 ? 's' }}</p>
+        {% endif %}
+    </div>
+
+    {% if party.photos is empty %}
+        <p style="margin-top:30px;">Les photos de cette soirée seront bientôt disponibles, revenez nous voir prochainement !</p>
+    {% else %}
+        <div class="gallery" data-controller="lightbox" data-lightbox-title-value="{{ party.title }}">
+            {% for photo in party.photos %}
+                <a class="gallery__item"
+                   href="{{ path('app_party_photo', {slug: party.slug, size: 'large', filename: photo.filename}) }}"
+                   data-lightbox-target="item"
+                   data-action="lightbox#open"
+                   data-download="{{ path('app_party_photo', {slug: party.slug, size: 'large', filename: photo.filename, download: 1}) }}"
+                   title="{{ party.title }}">
+                    <img src="{{ path('app_party_photo', {slug: party.slug, size: 'thumb', filename: photo.filename}) }}"
+                         alt="{{ party.title }} - photo {{ loop.index }}"
+                         width="{{ photo.width }}" height="{{ photo.height }}"
+                         loading="{{ loop.index <= 24 ? 'eager' : 'lazy' }}" decoding="async">
+                </a>
+            {% endfor %}
+
+            <div class="lightbox" hidden data-lightbox-target="overlay" data-action="click->lightbox#closeOnBackdrop" role="dialog" aria-modal="true" aria-label="Photo agrandie">
+                <span class="lightbox__counter" data-lightbox-target="counter"></span>
+                <a class="lightbox__button lightbox__button--download" data-lightbox-target="download" href="#" title="Télécharger la photo" aria-label="Télécharger la photo">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+                </a>
+                <button type="button" class="lightbox__button lightbox__button--close" data-action="lightbox#close" title="Fermer (Echap)" aria-label="Fermer">&times;</button>
+                <button type="button" class="lightbox__button lightbox__button--prev" data-action="lightbox#previous" title="Photo précédente" aria-label="Photo précédente"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                <figure class="lightbox__figure">
+                    <img class="lightbox__image" data-lightbox-target="image" alt="">
+                    <figcaption class="lightbox__caption" data-lightbox-target="caption"></figcaption>
+                </figure>
+                <button type="button" class="lightbox__button lightbox__button--next" data-action="lightbox#next" title="Photo suivante" aria-label="Photo suivante"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if page %}
+        <p style="margin-top:30px;"><a href="{{ path('app_page', {slug: page.slug}) }}">&lsaquo; Accéder à une autre soirée</a></p>
+    {% endif %}
+{% endblock %}

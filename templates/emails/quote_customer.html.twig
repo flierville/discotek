@@ -1,0 +1,31 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block content %}
+    <h1>Votre devis d'animation musicale</h1>
+    <p>Madame, Monsieur {{ quote.fullName }},</p>
+    <p>Pour faire suite à votre demande de devis sur notre site Internet, nous vous prions de bien vouloir trouver ci-dessous le tarif de la prestation.</p>
+
+    <h2>Votre demande</h2>
+    {{ include('emails/_quote_details.html.twig') }}
+
+    <h2>Prestation d'animation musicale</h2>
+    <p><strong>Description :</strong> Animation musicale de qualité</p>
+
+    <div class="price">
+        <p class="price-label">Montant de la prestation</p>
+        <p class="price-amount">{{ quote.totalPrice|euros }}</p>
+        <p class="price-note">Déplacement aller / retour ({{ quote.distanceKm }} km) inclus dans le forfait</p>
+    </div>
+
+    <p class="note">Votre demande de tarif en ligne vient d'être envoyée, merci de nous avoir contacté. Nous vous répondrons dans les plus brefs délais.</p>
+
+    {% if settings.phone %}
+        <p style="text-align:center;margin-top:22px;">
+            <a class="button" href="tel:{{ settings.phone|replace({'.': '', ' ': ''}) }}">Appelez-nous au {{ settings.phone }}</a>
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block footer_extra %}
+    <p class="legal">Ceci est un email automatique, merci de ne pas y répondre directement : contactez-nous par téléphone ou à l'adresse {{ settings.publicEmail }}.</p>
+{% endblock %}

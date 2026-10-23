@@ -7,6 +7,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    # Party photos are stored outside of public/ and served after the access code check.
+    app.party_storage_dir: '%kernel.project_dir%/storage/parties'
+    # Pictures inserted in the pages with the WYSIWYG editor.
+    app.page_upload_dir: '%kernel.project_dir%/public/uploads/pages'
+    app.page_upload_url: '/uploads/pages'
 
 services:
     # default configuration for services in *this* file
@@ -18,6 +23,19 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Enum/'
+            - '../src/Form/Model/'
+            - '../src/Geo/'
+            - '../src/Quote/QuotePrice.php'
+            - '../src/Quote/TravelPolicy.php'
+            - '../src/Party/ImportResult.php'
+            - '../src/Party/UnsupportedImageException.php'
+            - '../src/Pagination/'
+            - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+when@test:
+    parameters:
+        app.party_storage_dir: '%kernel.project_dir%/var/test/parties'
+        app.page_upload_dir: '%kernel.project_dir%/var/test/uploads'

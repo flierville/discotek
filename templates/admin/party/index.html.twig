@@ -1,0 +1,59 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Photos de soirées{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="page-title">Photos de soirées</h1>
+            <p class="mt-1 text-sm text-slate-500">Les invités saisissent le code de la soirée sur la page « Photos de soirées » pour voir la galerie.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            {{ include('admin/_search.html.twig', {placeholder: 'Titre, raccourci, code...'}) }}
+            <a href="{{ path('admin_party_new') }}" class="btn btn-primary">
+                {{ include('admin/_icon.html.twig', {name: 'plus', class: 'size-4'}) }} Nouvelle soirée
+            </a>
+        </div>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th>Soirée</th>
+                        <th>Date</th>
+                        <th>Code</th>
+                        <th class="text-right">Photos</th>
+                        <th>Statut</th>
+                        <th><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in parties %}
+                        {% set party = row[0] %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('admin_party_edit', {id: party.id}) }}" class="font-medium text-slate-900 hover:text-brand-600">{{ party.title }}</a>
+                                <p class="text-xs text-slate-500">/photos-de-soirees/{{ party.slug }}</p>
+                            </td>
+                            <td class="whitespace-nowrap">{{ party.eventDate ? party.eventDate|format_date('medium', locale: 'fr') : '-' }}</td>
+                            <td><code class="rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-800">{{ party.accessCode }}</code></td>
+                            <td class="text-right">{{ row.photoCount }}</td>
+                            <td>
+                                {% if party.published %}<span class="badge badge-green">Accessible</span>{% else %}<span class="badge badge-gray">Masquée</span>{% endif %}
+                            </td>
+                            <td class="text-right whitespace-nowrap">
+                                <a href="{{ path('admin_party_edit', {id: party.id}) }}" class="btn btn-secondary btn-sm">Gérer</a>
+                                {{ include('admin/_delete_button.html.twig', {url: path('admin_party_delete', {id: party.id}), token_id: 'delete-party-' ~ party.id, message: 'Supprimer la soirée « ' ~ party.title ~ ' » et ses ' ~ row.photoCount ~ ' photos ? Cette action est définitive.', small: true}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" class="py-10 text-center text-slate-500">Aucune soirée{{ search ? ' pour cette recherche' }}.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ include('admin/_pagination.html.twig', {paginator: parties}) }}
+    </div>
+{% endblock %}

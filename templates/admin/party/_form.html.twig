@@ -1,0 +1,25 @@
+{{ form_start(form, {attr: {class: 'card-body space-y-5', 'data-controller': 'slug', 'data-slug-locked-value': (form.vars.value.id ? 'true' : 'false')}}) }}
+    {{ form_row(form.title) }}
+    <div class="grid gap-5 sm:grid-cols-2">
+        {{ form_row(form.slug) }}
+        <div data-controller="access-code" data-access-code-alphabet-value="{{ constant('App\\Party\\AccessCodeGenerator::ALPHABET') }}">
+            {{ form_label(form.accessCode) }}
+            <div class="flex gap-2">
+                {{ form_widget(form.accessCode) }}
+                <button type="button" class="btn btn-secondary shrink-0" data-action="access-code#generate" title="Générer un nouveau code">
+                    {{ include('admin/_icon.html.twig', {name: 'refresh', class: 'size-4'}) }}
+                </button>
+            </div>
+            {{ form_help(form.accessCode) }}
+            {{ form_errors(form.accessCode) }}
+        </div>
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2">
+        {{ form_row(form.eventDate) }}
+        {{ form_row(form.published, {row_class: 'sm:pt-7'}) }}
+    </div>
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+        <a href="{{ path('admin_party_index') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+{{ form_end(form) }}

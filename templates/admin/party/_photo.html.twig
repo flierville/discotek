@@ -1,0 +1,12 @@
+<figure class="group relative aspect-square overflow-hidden rounded-lg bg-slate-100 ring-1 ring-slate-200" data-photo-id="{{ photo.id }}">
+    <a href="{{ path('app_party_photo', {slug: photo.party.slug, size: 'large', filename: photo.filename}) }}" target="_blank">
+        <img src="{{ path('app_party_photo', {slug: photo.party.slug, size: 'thumb', filename: photo.filename}) }}" alt="{{ photo.originalName }}" loading="lazy" class="size-full object-cover">
+    </a>
+    <form method="post" action="{{ path('admin_party_photo_delete', {id: photo.id}) }}" class="absolute top-1 right-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100"
+          data-action="photo-uploader#deletePhoto">
+        <input type="hidden" name="_token" value="{{ csrf_token('party-photos-' ~ photo.party.id) }}">
+        <button type="submit" class="flex size-7 items-center justify-center rounded-full bg-white/90 text-red-600 shadow hover:bg-red-600 hover:text-white" title="Supprimer cette photo">
+            {{ include('admin/_icon.html.twig', {name: 'trash', class: 'size-4'}) }}
+        </button>
+    </form>
+</figure>

@@ -1,5 +1,7 @@
 twig:
     file_name_pattern: '*.twig'
+    # Back office theme; the public forms use templates/front/form/theme.html.twig explicitly.
+    form_themes: ['admin/_form_theme.html.twig']
 
 when@test:
     twig:
