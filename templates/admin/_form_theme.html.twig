@@ -1,7 +1,7 @@
 {% use 'form_div_layout.html.twig' %}
 
 {%- block form_row -%}
-    <div class="{{ row_class|default('') }}">
+    <div class="{{ row_class|default('') }}"{% for attrname, attrvalue in row_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
         {{- form_label(form) -}}
         {{- form_widget(form) -}}
         {{- form_help(form) -}}

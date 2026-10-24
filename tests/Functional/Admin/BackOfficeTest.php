@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Admin;
 
 use App\Entity\ContactMessage;
+use App\Entity\EventType;
 use App\Entity\GuestRange;
 use App\Entity\Page;
 use App\Entity\Settings;
+use App\Enum\EventPricing;
 use App\Enum\PageKind;
 use App\Tests\Functional\FunctionalTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -38,6 +40,7 @@ final class BackOfficeTest extends FunctionalTestCase
         yield ['/admin/devis', 'Devis'];
         yield ['/admin/devis/regles', 'Règles de calcul des devis'];
         yield ['/admin/devis/regles/personnes/nouveau', 'Ajouter une tranche de personnes'];
+        yield ['/admin/devis/regles/evenements/nouveau', "Ajouter une type d'événement"];
         yield ['/admin/devis/regles/dates/nouveau', 'Ajouter une date spéciale'];
         yield ['/admin/contacts', 'Demandes de contact'];
         yield ['/admin/soirees', 'Photos de soirées'];
@@ -114,6 +117,35 @@ final class BackOfficeTest extends FunctionalTestCase
 
         $crawler = $this->client->request('GET', '/devis-en-ligne');
         self::assertNotContains('Plus de 180 personnes', $crawler->filter('#quote_request_guestRange option')->each(static fn ($option): string => $option->text()));
+    }
+
+    public function testEventTypeGetsABonusOrMalus(): void
+    {
+        $wedding = $this->entityManager()->getRepository(EventType::class)->findOneBy(['label' => 'Mariage']);
+        $crawler = $this->client->request('GET', '/admin/devis/regles/evenements/'.$wedding?->getId());
+        $this->client->submit($crawler->selectButton('Enregistrer')->form(), [
+            'event_type_form[pricing]' => EventPricing::Adjustment->value,
+            'event_type_form[priceAdjustment]' => '-50',
+        ]);
+
+        self::assertResponseRedirects('/admin/devis/regles');
+        $this->entityManager()->clear();
+        $wedding = $this->entityManager()->getRepository(EventType::class)->findOneBy(['label' => 'Mariage']);
+        self::assertSame(-50, $wedding?->getPriceAdjustment());
+        self::assertNull($wedding?->getFixedPrice());
+    }
+
+    public function testBonusOrMalusAmountIsRequired(): void
+    {
+        $crawler = $this->client->request('GET', '/admin/devis/regles/evenements/nouveau');
+        $this->client->submit($crawler->selectButton('Enregistrer')->form(), [
+            'event_type_form[label]' => 'Gala',
+            'event_type_form[pricing]' => EventPricing::Adjustment->value,
+            'event_type_form[position]' => '110',
+        ]);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.form-error', 'Indiquez le montant du bonus / malus.');
     }
 
     public function testSpecialDateCannotBeDefinedTwice(): void

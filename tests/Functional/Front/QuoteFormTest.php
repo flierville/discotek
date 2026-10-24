@@ -9,6 +9,7 @@ use App\Entity\EventType;
 use App\Entity\GuestRange;
 use App\Entity\NewsletterSubscriber;
 use App\Entity\QuoteRequest;
+use App\Enum\EventPricing;
 use App\Tests\Functional\FunctionalTestCase;
 use Symfony\Component\Mime\Email;
 
@@ -65,6 +66,22 @@ final class QuoteFormTest extends FunctionalTestCase
         $quote = $this->entityManager()->getRepository(QuoteRequest::class)->findOneBy(['email' => 'julie@example.com']);
         self::assertSame(1000, $quote?->getServicePrice());
         self::assertSame(20, $quote?->getTravelPrice());
+    }
+
+    public function testBonusOfTheEventTypeIsAddedToTheGuestRangePrice(): void
+    {
+        $wedding = $this->entityManager()->getRepository(EventType::class)->findOneBy(['label' => 'Mariage']);
+        $wedding?->setPricing(EventPricing::Adjustment)->setPriceAdjustment(70);
+        $this->entityManager()->flush();
+
+        $this->submitQuote([
+            'quote_request[eventType]' => (string) $this->eventTypeId('Mariage'),
+            'quote_request[location][name]' => 'Grugny',
+        ]);
+
+        self::assertResponseRedirects('/information');
+        $quote = $this->entityManager()->getRepository(QuoteRequest::class)->findOneBy(['email' => 'julie@example.com']);
+        self::assertSame(800, $quote?->getServicePrice());
     }
 
     public function testCityTypedWithoutTheAutocompleteIsFoundInTheDatabase(): void

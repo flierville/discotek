@@ -13,7 +13,7 @@ use App\Repository\SpecialDateRepository;
  * Computes the price of the music entertainment. Priority of the rules:
  *  1. a special date (24/12, 31/12...) fixes the price;
  *  2. otherwise an event type with a fixed price (New Year's Eve...);
- *  3. otherwise the price of the guest range.
+ *  3. otherwise the price of the guest range, plus the bonus / malus of the event type.
  * The travel fee is then added (the email presents it as "included in the package").
  */
 final readonly class QuoteCalculator
@@ -47,6 +47,15 @@ final readonly class QuoteCalculator
             return [$eventType->getFixedPrice(), \sprintf("Type d'événement : %s", $eventType->getLabel())];
         }
 
-        return [$guestRange->getPrice(), \sprintf('Nombre de personnes : %s', $guestRange->getLabel())];
+        $rule = \sprintf('Nombre de personnes : %s', $guestRange->getLabel());
+        $adjustment = $eventType?->getPriceAdjustment();
+        if (null === $adjustment || 0 === $adjustment) {
+            return [$guestRange->getPrice(), $rule];
+        }
+
+        return [
+            max(0, $guestRange->getPrice() + $adjustment),
+            \sprintf("%s, type d'événement : %s (%+d €)", $rule, $eventType->getLabel(), $adjustment),
+        ];
     }
 }

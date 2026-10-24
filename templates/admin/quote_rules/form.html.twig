@@ -9,7 +9,7 @@
     </div>
 
     <section class="card max-w-2xl">
-        {{ form_start(form, {attr: {class: 'card-body space-y-5'}}) }}
+        {{ form_start(form, {attr: form.vars.attr|merge({class: 'card-body space-y-5'})}) }}
             {{ form_widget(form) }}
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="btn btn-primary">Enregistrer</button>

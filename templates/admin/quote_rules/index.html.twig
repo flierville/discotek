@@ -27,7 +27,7 @@
         <h1 class="page-title mt-1">Règles de calcul des devis</h1>
         <p class="mt-1 max-w-3xl text-sm text-slate-500">
             Prix de la prestation = prix de la <strong>date spéciale</strong> si la soirée tombe ce jour-là, sinon prix fixe du <strong>type d'événement</strong> s'il en a un,
-            sinon prix selon le <strong>nombre de personnes</strong>. Les <strong>frais de déplacement</strong> sont ajoutés (présentés au client comme inclus dans le forfait).
+            sinon prix selon le <strong>nombre de personnes</strong>, augmenté ou diminué du bonus / malus du type d'événement. Les <strong>frais de déplacement</strong> sont ajoutés (présentés au client comme inclus dans le forfait).
         </p>
     </div>
 
@@ -50,14 +50,22 @@
         </section>
 
         <section class="card overflow-hidden">
-            {{ _self.rule_header("Types d'événement", 'Liste « Votre demande porte sur ». Un prix fixe remplace le prix selon le nombre de personnes.', 'evenements') }}
+            {{ _self.rule_header("Types d'événement", 'Liste « Votre demande porte sur ». Un prix fixe remplace le prix selon le nombre de personnes, un bonus / malus s\'y ajoute.', 'evenements') }}
             <table class="table">
-                <thead class="bg-slate-50"><tr><th>Libellé</th><th class="text-right">Prix fixe</th><th>Statut</th><th></th></tr></thead>
+                <thead class="bg-slate-50"><tr><th>Libellé</th><th class="text-right">Prix</th><th>Statut</th><th></th></tr></thead>
                 <tbody>
                     {% for type in eventTypes %}
                         <tr>
                             <td class="font-medium text-slate-900">{{ type.label }}</td>
-                            <td class="text-right">{{ type.fixedPrice is null ? '-' : type.fixedPrice|euros }}</td>
+                            <td class="text-right whitespace-nowrap">
+                                {%- if type.fixedPrice is not null -%}
+                                    {{ type.fixedPrice|euros }} <span class="text-xs text-slate-500">(fixe)</span>
+                                {%- elseif type.priceAdjustment is not null -%}
+                                    {{ type.priceAdjustment > 0 ? '+' }}{{ type.priceAdjustment|euros }}
+                                {%- else -%}
+                                    -
+                                {%- endif -%}
+                            </td>
                             <td>{% if type.active %}<span class="badge badge-green">Actif</span>{% else %}<span class="badge badge-gray">Masqué</span>{% endif %}</td>
                             {{ _self.rule_actions('evenements', type, type.label) }}
                         </tr>
