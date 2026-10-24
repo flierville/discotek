@@ -92,7 +92,7 @@ Tester la connexion :
 ssh -T git@github.com
 
 Récupérer le projet :
-git clone git@github.com:MarcAntoineKmd/generateimage.git ./
+git clone git@github.com:flierville/discotek.git ./
 ```
 
 - Générer un hash pour APP_SECRET :
