@@ -122,7 +122,7 @@ Installer ensuite les composants
 composer install
 php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:migrations:migrate
-php bin/console app:create-user vous@exemple.com --admin   # mot de passe demandé
+ php bin/console app:create-admin vous@exemple.com   # mot de passe demandé
 php bin/console tailwind:build
 ```
 
@@ -131,24 +131,18 @@ Alors il faudra faire :
 ```bash
 mkdir -p ~/tmp
 chmod 700 ~/tmp
-TMPDIR=~/tmp php bin/console tailwind:build
-```
-
-Voici les dernière commande pour la mise en production (`asset-map:compile` copie CSS/JS versionnés dans `public/assets`, indispensable en prod ; il se lance **après** `tailwind:build`) :
-```bash
-composer install --no-dev --optimize-autoloader
-TMPDIR=~/tmp php bin/console tailwind:build --minify
-TMPDIR=~/tmp php bin/console tailwind:build --minify assets/styles/admin.css
+export TMPDIR=~/tmp
+php bin/console tailwind:build assets/styles/app.css --minify
+php bin/console tailwind:build assets/styles/admin.css --minify
 php bin/console asset-map:compile
 php bin/console cache:clear
-php bin/console cache:warmup
 ```
 
 Vérification de l'envoi Email :
 
 ```bash
 php bin/console debug:config framework mailer
-php bin/console mailer:test fabien.lierville27@gmail.com --from=no-reply@classement-magicien.mycloud.lf10198.ma.fr -vvv
+php bin/console mailer:test fabien.lierville27@gmail.com --from=no_reply@discotekanimation.fr -vvv
 ```
 
 
@@ -162,10 +156,14 @@ git pull origin main
 ```shell
 composer install --no-dev --optimize-autoloader
 php bin/console doctrine:migrations:migrate --no-interaction
-TMPDIR=~/tmp php bin/console tailwind:build --minify
-TMPDIR=~/tmp php bin/console tailwind:build --minify assets/styles/admin.css
+
+
+mkdir -p ~/tmp
+chmod 700 ~/tmp
+export TMPDIR=~/tmp
+php bin/console tailwind:build assets/styles/app.css --minify
+php bin/console tailwind:build assets/styles/admin.css --minify
 php bin/console asset-map:compile
 php bin/console cache:clear
-php bin/console cache:warmup
 
 ```
