@@ -6,6 +6,7 @@
     {{ include('front/form/_errors_summary.html.twig') }}
 
     {{ form_start(form, {attr: {class: 'legacy-form', id: 'form_devis', novalidate: 'novalidate', 'data-controller': 'submit-once'}}) }}
+        <h2 class="legacy-form__section">Vos coordonnées</h2>
         {{ form_row(form.lastName) }}
         {{ form_row(form.firstName) }}
         {{ form_row(form.email) }}
@@ -13,7 +14,7 @@
         {{ form_row(form.phone) }}
         {{ form_row(form.postalAddress, {attr: {class: 'form-row__address'}}) }}
 
-        <hr class="legacy-form__separator">
+        <h2 class="legacy-form__section">Votre événement</h2>
 
         {{ form_row(form.eventType) }}
         {{ form_row(form.guestRange) }}

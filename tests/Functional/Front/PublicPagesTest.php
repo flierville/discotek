@@ -19,7 +19,7 @@ final class PublicPagesTest extends FunctionalTestCase
         self::assertSelectorTextSame('.site-header__title .text-disco-yellow', 'Animation');
         self::assertSelectorTextContains('.rich-text h1', 'Présentation');
         self::assertSame(
-            ['Accueil', 'Devis en ligne', 'Contact', 'Liens / Partenaires', 'Photos de soirees'],
+            ['Accueil', 'Devis en ligne', 'Contact', 'Liens / Partenaires', 'Photos de soirees', 'Les avis'],
             $crawler->filter('.site-menu__item a')->each(static fn ($link): string => $link->text()),
         );
         self::assertSame('color:#ff0000;--menu-color:#ff0000', $crawler->filter('.site-menu__item a')->eq(1)->attr('style'));

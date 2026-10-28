@@ -8,16 +8,31 @@
     <h2>Votre demande</h2>
     {{ include('emails/_quote_details.html.twig') }}
 
-    <h2>Prestation d'animation musicale</h2>
-    <p><strong>Description :</strong> Animation musicale de qualité</p>
-
     <div class="price">
         <p class="price-label">Montant de la prestation</p>
         <p class="price-amount">{{ quote.totalPrice|euros }}</p>
+        <p class="price-vat"><em>TVA non applicable, art. 293B du CGI</em></p>
         <p class="price-note">Déplacement aller / retour ({{ quote.distanceKm }} km) inclus dans le forfait</p>
     </div>
 
-    <p class="note">Votre demande de tarif en ligne vient d'être envoyée, merci de nous avoir contacté. Nous vous répondrons dans les plus brefs délais.</p>
+    <h2>Une prestation clé en main pour une soirée inoubliable</h2>
+    <p>Ce qui est inclus dans votre Formule :</p>
+    <ul class="included">
+        <li><strong>Prestation DJ Premium (19h30 - 04h00)</strong><br>Une programmation musicale sur-mesure et mixée en direct pour faire vibrer votre piste de danse.</li>
+        <li><strong>Matériel &amp; éclairage professionnel</strong><br>Installation d'un système de sonorisation haut de gamme adapté au lieu et mise en lumière dynamique de l'espace danse.</li>
+        <li><strong>Deux animations durant le repas</strong><br>Des moments interactifs et rythmés pour divertir vos invités et créer une ambiance chaleureuse entre les plats.</li>
+        <li><strong>Rendez-vous de préparation personnalisé</strong><br>Un accompagnement dédié en amont pour définir vos goûts, caler le planning et personnaliser chaque temps fort de votre soirée.</li>
+        <li><strong>Frais de déplacement inclus</strong><br>Aucun coût caché, le transport du matériel et les trajets jusqu'à votre lieu de réception sont entièrement pris en charge.</li>
+    </ul>
+
+    <h2>Options complémentaires (sur demande)</h2>
+    <ul class="options">
+        <li>Vidéo projecteur</li>
+        <li>Écran</li>
+        <li>Jet de scène</li>
+        <li>Éclairage de salle</li>
+        <li>Machine à fumée lourde</li>
+    </ul>
 
     {% if settings.phone %}
         <p style="text-align:center;margin-top:22px;">

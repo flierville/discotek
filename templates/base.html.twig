@@ -12,7 +12,8 @@
         <meta name="rating" content="General">
         <meta name="theme-color" content="#181b19">
         {% block canonical %}<link rel="canonical" href="{{ app.request.schemeAndHttpHost ~ app.request.pathInfo }}">{% endblock %}
-        <link rel="preload" href="{{ asset('fonts/DiscoDiva.ttf') }}" as="font" type="font/ttf" crossorigin>
+        <link rel="preload" href="{{ asset('fonts/Montserrat-800.woff2') }}" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="{{ asset('fonts/Montserrat-600.woff2') }}" as="font" type="font/woff2" crossorigin>
         {# The stylesheet is imported by assets/app.js (AssetMapper adds the <link> tag). #}
         {% block stylesheets %}{% endblock %}
 
@@ -59,6 +60,9 @@
                                    {% if menu_page.menuColor %}style="color:{{ menu_page.menuColor }};--menu-color:{{ menu_page.menuColor }}"{% endif %}>{{ menu_page.title }}</a>
                             </p>
                         {% endfor %}
+                        <p class="site-menu__item">
+                            <a href="https://g.page/r/CW21zHOosPbdEAE/review" title="Les avis" target="_blank" rel="noopener">Les avis</a>
+                        </p>
                     </div>
                 </nav>
                 </div>

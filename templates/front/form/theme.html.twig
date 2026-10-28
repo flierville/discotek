@@ -1,6 +1,6 @@
 {% use 'form_div_layout.html.twig' %}
 
-{# Legacy layout: bold right aligned label (250px), field, italic help text underneath. #}
+{# Label above the field, errors under the field, help text underneath. #}
 {%- block form_row -%}
     {%- set widget_attr = {} -%}
     {%- if help is not empty -%}
@@ -24,7 +24,7 @@
         {%- set label = label ?: name|humanize -%}
         <label class="form-row__label"{% if not compound %} for="{{ id }}"{% endif %}>
             {{- label|trans({}, translation_domain) -}}
-            {%- if required %}&nbsp;<span class="form-row__required">*</span>{% endif %}&nbsp;:
+            {%- if required %}&nbsp;<span class="form-row__required">*</span>{% endif -%}
         </label>
     {%- endif -%}
 {%- endblock form_label -%}
@@ -41,13 +41,14 @@
     {%- endfor -%}
 {%- endblock form_errors -%}
 
-{# Newsletter checkbox: displayed in the help column, like the legacy site. #}
+{# Newsletter checkbox: label on the right of the box. #}
 {%- block checkbox_row -%}
     <div class="form-row">
-        <span aria-hidden="true"></span>
         <div class="form-row__field">
-            {{- form_widget(form) -}}
-            <label for="{{ id }}">{{ label|trans({}, translation_domain) }}</label>
+            <label class="form-row__checkbox" for="{{ id }}">
+                {{- form_widget(form) -}}
+                <span>{{ label|trans({}, translation_domain) }}</span>
+            </label>
             {{- form_errors(form) -}}
         </div>
     </div>
@@ -63,7 +64,7 @@
 {%- block city_autocomplete_row -%}
     <div class="form-row">
         <label class="form-row__label" for="{{ form.name.vars.id }}">
-            {{- label|trans({}, translation_domain) -}}&nbsp;<span class="form-row__required">*</span>&nbsp;:
+            {{- label|trans({}, translation_domain) -}}&nbsp;<span class="form-row__required">*</span>
         </label>
         <div class="form-row__field">
             <div class="autocomplete" data-controller="city-autocomplete"
